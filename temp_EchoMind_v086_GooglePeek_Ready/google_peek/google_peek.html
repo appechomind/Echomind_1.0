@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Google</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: white;
+    }
+    .logo {
+      margin-top: 15vh;
+    }
+    .search-box {
+      margin-top: 3vh;
+    }
+    input[type="text"] {
+      width: 80%%;
+      padding: 12px;
+      font-size: 18px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="logo">
+    <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_light_color_92x30dp.png" alt="Google" />
+  </div>
+  <div class="search-box">
+    <form id="searchForm">
+      <input type="text" id="query" name="q" placeholder="Search Google or type a URL" autofocus required />
+      <br/>
+      <button type="submit">Google Search</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('searchForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const query = document.getElementById('query').value;
+      localStorage.setItem('lastQuery', query);  // save to local storage for peek
+      window.location.href = 'https://www.google.com/search?q=' + encodeURIComponent(query);
+    });
+  </script>
+</body>
+</html>

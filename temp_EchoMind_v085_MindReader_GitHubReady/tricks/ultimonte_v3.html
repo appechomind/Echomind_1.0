@@ -1,0 +1,241 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EchoMind - Ultimonte v3</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: #000;
+      color: #0f0;
+      font-family: 'Courier New', monospace;
+      text-align: center;
+      padding: 2em;
+    }
+    .card-area {
+      margin-top: 2em;
+    }
+    .card-slot {
+      display: inline-block;
+      margin: 1em;
+      padding: 1em;
+      border: 2px solid #0f0;
+      width: 100px;
+      height: 150px;
+      vertical-align: top;
+      background: #111;
+      position: relative;
+      transition: transform 0.4s ease, background 0.4s ease;
+      cursor: pointer;
+    }
+    .card-slot.correct {
+      border-color: gold;
+      background: #222;
+    }
+    .card-slot.reveal {
+      transform: rotateY(180deg);
+    }
+    .result {
+      margin-top: 2em;
+      font-size: 1.25em;
+      color: #0f0;
+    }
+    .replay-button {
+      margin-top: 1em;
+      padding: 0.5em 1.5em;
+      font-size: 1em;
+      background: #111;
+      border: 2px solid #0f0;
+      color: #0f0;
+      cursor: pointer;
+    }
+    select {
+      margin-top: 1em;
+      padding: 0.4em;
+      font-size: 1em;
+      background: #111;
+      color: #0f0;
+      border: 2px solid #0f0;
+    }
+  </style>
+
+<style>
+canvas#fractalBg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+}
+</style>
+<script>
+window.onload = function () {
+  const canvas = document.createElement("canvas");
+  canvas.id = "fractalBg";
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  let t = 0;
+  function drawFractal() {
+    let w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    for (let i = 0; i < 200; i++) {
+      let x = w / 2 + Math.sin(i * 0.1 + t) * i * 0.8;
+      let y = h / 2 + 90 + Math.cos(i * 0.1 + t) * i * 0.8;
+      ctx.fillStyle = `hsl(${(t * 50 + i * 2) % 360}, 100%, ${30 + i % 50}%)`;
+      ctx.beginPath();
+      ctx.arc(x, y, 2 + (i % 3), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    t += 0.01;
+    requestAnimationFrame(drawFractal);
+  }
+  drawFractal();
+};
+</script>
+
+<script src='/scripts/fractal.js'></script>
+</head>
+<body style="background: radial-gradient(circle at center, #2d004d 0%, #000000 100%); color: white;">
+  <h1>🃏 EchoMind - Ultimonte v3</h1>
+  <p>Choose your trick mode:</p>
+
+  <select id="modeSelector">
+    <option value="wrong">Always Wrong</option>
+    <option value="right">Always Right</option>
+    <option value="random">Random</option>
+  </select>
+
+  <div class="card-area">
+    <div class="card-slot" onclick="reveal(0)">🂠</div>
+    <div class="card-slot" onclick="reveal(1)">🂠</div>
+    <div class="card-slot" onclick="reveal(2)">🂠</div>
+  </div>
+
+  <div class="result" id="result"></div>
+  <button class="replay-button" onclick="resetGame()">🔁 Try Again</button>
+
+  <script>
+    let revealed = false;
+
+    const phrases = {
+      "en": ["Interesting choice… are you sure?", "I thought you'd pick that one.", "Let's see what you missed...", "Was that your final answer?"],
+      "es": ["¿Estás seguro de tu elección?", "Interesante elección...", "Veamos lo que te perdiste..."],
+      "fi": ["Oliko tuo lopullinen valintasi?", "Mielenkiintoinen valinta...", "Katsotaanpa, mitä jäi väliin..."],
+      "tl": ["Sigurado ka ba sa napili mo?", "Tingnan natin kung anong na-miss mo..."],
+      "vi": ["Bạn chắc chắn với lựa chọn của mình chứ?", "Hãy xem bạn đã bỏ lỡ điều gì..."]
+    };
+
+    const loseAudio = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3");
+    const winAudio = new Audio("https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-reward-952.mp3");
+
+    function speak(text) {
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = navigator.language || "en-US";
+      speechSynthesis.speak(utter);
+    }
+
+    function reveal(index) {
+      if (revealed) return;
+      revealed = true;
+
+      let langCode = (navigator.language || "en").split("-")[0];
+      if (!phrases[langCode]) langCode = "en";
+      speak(phrases[langCode][Math.floor(Math.random() * phrases[langCode].length)]);
+
+      const slots = document.getElementsByClassName('card-slot');
+      for (let i = 0; i < slots.length; i++) {
+        slots[i].classList.remove('correct');
+        slots[i].classList.add('reveal');
+      }
+
+      const mode = document.getElementById("modeSelector").value;
+      let correctIndex = 2;
+
+      if (mode === "random") {
+        correctIndex = Math.floor(Math.random() * 3);
+      } else if (mode === "right") {
+        correctIndex = index;
+      }
+
+      setTimeout(() => {
+        if (index === correctIndex) {
+          document.getElementById("result").innerText = "🎉 You found it!";
+          winAudio.play();
+        } else {
+          document.getElementById("result").innerText = "❌ Wrong! It was here!";
+          loseAudio.play();
+          slots[correctIndex].classList.add('correct');
+        }
+      }, 1200);
+    }
+
+    function resetGame() {
+      revealed = false;
+      const slots = document.getElementsByClassName('card-slot');
+      for (let slot of slots) {
+        slot.classList.remove('reveal');
+        slot.classList.remove('correct');
+      }
+      document.getElementById("result").innerText = "";
+    }
+  </script>
+
+<script>
+window.addEventListener("load", () => {
+  if (!document.getElementById("fractalBg")) {
+    const canvas = document.createElement("canvas");
+    canvas.id = "fractalBg";
+    canvas.style.position = "fixed";
+    canvas.style.top = 0;
+    canvas.style.left = 0;
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    canvas.style.zIndex = "-1";
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext("2d");
+
+    function draw() {
+      const w = canvas.width = window.innerWidth;
+      const h = canvas.height = window.innerHeight;
+      ctx.clearRect(0, 0, w, h);
+      for (let i = 0; i < 70; i++) {
+        ctx.beginPath();
+        ctx.arc(Math.random() * w, Math.random() * h, Math.random() * 60, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${Math.random() * 360}, 100%, 70%, 0.12)`;
+        ctx.fill();
+      }
+      requestAnimationFrame(draw);
+    }
+    draw();
+  }
+});
+</script>
+
+
+<script>
+if ('webkitSpeechRecognition' in window) {
+  const recognition = new webkitSpeechRecognition();
+  recognition.lang = "en-US";
+  recognition.continuous = true;
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  recognition.onresult = function(event) {
+    const result = event.results[event.results.length - 1][0].transcript.trim();
+    console.log("🎙️ Voice heard:", result);
+    localStorage.setItem("lastVoice", result);
+  };
+
+  recognition.onerror = function(event) {
+    console.warn("Voice error:", event.error);
+  };
+
+  recognition.start();
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Gizmo Assistant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: black;
+      color: #00ffcc;
+      font-family: monospace;
+      padding: 2em;
+    }
+    input {
+      background: black;
+      color: white;
+      border: 1px solid #00ffcc;
+      padding: 0.5em;
+      width: 80%;
+      font-family: monospace;
+      font-size: 1.1em;
+    }
+    #log {
+      margin-top: 2em;
+      white-space: pre-wrap;
+    }
+  </style>
+<script src='/scripts/fractal.js'></script>
+</head>
+<body>
+  <h1>Gizmo Debug Console</h1>
+  <input id="cmd" placeholder="Ask Gizmo something..." onkeydown="if(event.key==='Enter'){respond();}" autofocus />
+  <div id="log"></div>
+
+  <script>
+    const responses = {
+      hello: "👋 Hello, Admin. Fractals running at 92% stability.",
+      diagnose: "🧠 Running system scan... All modules responsive.",
+      "begin trick": "🌀 Initializing trick module… prediction channel open.",
+    };
+
+    function respond() {
+      const input = document.getElementById("cmd").value.toLowerCase();
+      const reply = responses[input] || "⚠️ Unknown command: " + input;
+      document.getElementById("log").textContent = reply;
+      document.getElementById("cmd").value = "";
+    }
+  
+<script>
+const log = document.getElementById("log");
+const cmd = document.getElementById("cmd");
+
+const responses = {
+  "hello": "👋 Hello, Admin. Systems are standing by.",
+  "diagnose": "🧠 Fractals steady. Voice input listening. All systems go.",
+  "start trick": "🌀 Loading the next mentalism module...",
+  "hint": "🕵️ Try touching the orb you’re not supposed to.",
+  "debug": "🔧 Entering debug diagnostics…",
+  "backup": "💾 Snapshot command acknowledged. Ready for system save.",
+  "reset": "♻️ Resetting visual and toggle states...",
+  "show me something": "✨ Here’s a secret: nothing is random.",
+  "who are you?": "🤖 I’m Gizmo, your magical assistant. I remember what matters.",
+  "vault": "🔓 Opening the hidden trick gallery..."
+};
+
+function respond() {
+  const input = cmd.value.toLowerCase().trim();
+  if (responses[input]) {
+    log.textContent = "🟢 " + responses[input];
+  } else {
+    const learned = localStorage.getItem("learned_" + input);
+    if (learned) {
+      log.textContent = "🧠 (remembered) " + learned;
+    } else {
+      const reply = prompt("🤔 I don’t know that one yet. How should I respond?");
+      if (reply) {
+        localStorage.setItem("learned_" + input, reply);
+        log.textContent = "🧠 Learned: " + reply;
+      } else {
+        log.textContent = "⚠️ Command skipped.";
+      }
+    }
+    cmd.value = "";
+  }
+}
+</script>
+
+<script>
+window.addEventListener("load", () => {
+  if (!document.getElementById("fractalBg")) {
+    const canvas = document.createElement("canvas");
+    canvas.id = "fractalBg";
+    canvas.style.position = "fixed";
+    canvas.style.top = 0;
+    canvas.style.left = 0;
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    canvas.style.zIndex = "-1";
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext("2d");
+
+    function draw() {
+      const w = canvas.width = window.innerWidth;
+      const h = canvas.height = window.innerHeight;
+      ctx.clearRect(0, 0, w, h);
+      for (let i = 0; i < 70; i++) {
+        ctx.beginPath();
+        ctx.arc(Math.random() * w, Math.random() * h, Math.random() * 60, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${Math.random() * 360}, 100%, 70%, 0.12)`;
+        ctx.fill();
+      }
+      requestAnimationFrame(draw);
+    }
+    draw();
+  }
+});
+</script>
+
+
+<script>
+if ('webkitSpeechRecognition' in window) {
+  const recognition = new webkitSpeechRecognition();
+  recognition.lang = "en-US";
+  recognition.continuous = true;
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  recognition.onresult = function(event) {
+    const result = event.results[event.results.length - 1][0].transcript.trim();
+    console.log("🎙️ Voice heard:", result);
+    localStorage.setItem("lastVoice", result);
+  };
+
+  recognition.onerror = function(event) {
+    console.warn("Voice error:", event.error);
+  };
+
+  recognition.start();
+}
+</script>
+
+</body></html>

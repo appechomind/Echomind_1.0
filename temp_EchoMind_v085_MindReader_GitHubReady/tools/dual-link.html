@@ -1,0 +1,108 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dual Device Link Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: #000;
+      color: #0f0;
+      font-family: monospace;
+      text-align: center;
+      padding: 2em;
+    }
+    input, button {
+      padding: 0.6em;
+      font-size: 1em;
+      margin: 0.5em;
+      border-radius: 6px;
+      border: none;
+    }
+    #qr {
+      margin-top: 1.5em;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+</head>
+<body>
+  <h1>🔗 Dual Device Link</h1>
+  <p>Enter your prediction below:</p>
+  <input id="prediction" placeholder="Enter word or card..." />
+  <br>
+  <button onclick="generate()">Generate Link</button>
+
+  <div id="linkOutput"></div>
+  <canvas id="qr"></canvas>
+
+  <script>
+    function generate() {
+      const prediction = document.getElementById("prediction").value.trim();
+      const url = window.location.origin + "/tools/spectator.html?thought=" + encodeURIComponent(prediction);
+      document.getElementById("linkOutput").innerHTML = "<p>Spectator Link:</p><p><a href='" + url + "' target='_blank'>" + url + "</a></p>";
+
+      const qr = new QRious({
+        element: document.getElementById("qr"),
+        value: url,
+        size: 200
+      });
+    }
+  </script>
+
+<script>
+window.addEventListener("load", () => {
+  if (!document.getElementById("fractalBg")) {
+    const canvas = document.createElement("canvas");
+    canvas.id = "fractalBg";
+    canvas.style.position = "fixed";
+    canvas.style.top = 0;
+    canvas.style.left = 0;
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    canvas.style.zIndex = "-1";
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext("2d");
+
+    function draw() {
+      const w = canvas.width = window.innerWidth;
+      const h = canvas.height = window.innerHeight;
+      ctx.clearRect(0, 0, w, h);
+      for (let i = 0; i < 70; i++) {
+        ctx.beginPath();
+        ctx.arc(Math.random() * w, Math.random() * h, Math.random() * 60, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${Math.random() * 360}, 100%, 70%, 0.12)`;
+        ctx.fill();
+      }
+      requestAnimationFrame(draw);
+    }
+    draw();
+  }
+});
+</script>
+
+
+<script>
+if ('webkitSpeechRecognition' in window) {
+  const recognition = new webkitSpeechRecognition();
+  recognition.lang = "en-US";
+  recognition.continuous = true;
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  recognition.onresult = function(event) {
+    const result = event.results[event.results.length - 1][0].transcript.trim();
+    console.log("🎙️ Voice heard:", result);
+    localStorage.setItem("lastVoice", result);
+  };
+
+  recognition.onerror = function(event) {
+    console.warn("Voice error:", event.error);
+  };
+
+  recognition.start();
+}
+</script>
+
+</body>
+</html>

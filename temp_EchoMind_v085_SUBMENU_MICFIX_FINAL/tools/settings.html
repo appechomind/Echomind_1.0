@@ -1,0 +1,162 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Settings</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      background: black;
+      color: white;
+      font-family: sans-serif;
+      padding: 2em;
+    }
+    .setting {
+      margin: 1em 0;
+      padding: 1em;
+      background: #222;
+      border-radius: 10px;
+    }
+    .toggle {
+      float: right;
+    }
+    input[type="checkbox"] {
+      transform: scale(1.5);
+    }
+  </style>
+<script src='/scripts/fractal.js'></script>
+</head>
+<body>
+  <h1>⚙️ EchoMind Settings</h1>
+  <div class="setting">
+    Fractal Background
+    <span class="toggle"><input type="checkbox" id="fractalToggle" /></span>
+  </div>
+  <div class="setting">
+    Music / Soundscape
+    <span class="toggle"><input type="checkbox" id="musicToggle" /></span>
+  </div>
+  <div class="setting">
+    Reset Orb Layout
+    <span class="toggle"><button onclick="resetLayout()">Reset</button></span>
+  </div>
+
+  <script>
+    const fractalToggle = document.getElementById("fractalToggle");
+    const musicToggle = document.getElementById("musicToggle");
+
+    // Load saved settings
+    fractalToggle.checked = localStorage.getItem("fractals") === "on";
+    musicToggle.checked = localStorage.getItem("music") === "on";
+
+    fractalToggle.onchange = () => {
+      localStorage.setItem("fractals", fractalToggle.checked ? "on" : "off");
+      alert("Fractal visuals " + (fractalToggle.checked ? "enabled" : "disabled"));
+    };
+
+    musicToggle.onchange = () => {
+      localStorage.setItem("music", musicToggle.checked ? "on" : "off");
+      alert("Music " + (musicToggle.checked ? "enabled" : "muted"));
+    };
+
+    function resetLayout() {
+      alert("Orb layout reset (visual only)");
+      // Implement layout reset logic here later
+    }
+  </script>
+
+<script>
+window.addEventListener("load", () => {
+  if (!document.getElementById("fractalBg")) {
+    const canvas = document.createElement("canvas");
+    canvas.id = "fractalBg";
+    canvas.style.position = "fixed";
+    canvas.style.top = 0;
+    canvas.style.left = 0;
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    canvas.style.zIndex = "-1";
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext("2d");
+
+    function draw() {
+      const w = canvas.width = window.innerWidth;
+      const h = canvas.height = window.innerHeight;
+      ctx.clearRect(0, 0, w, h);
+      for (let i = 0; i < 70; i++) {
+        ctx.beginPath();
+        ctx.arc(Math.random() * w, Math.random() * h, Math.random() * 60, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${Math.random() * 360}, 100%, 70%, 0.12)`;
+        ctx.fill();
+      }
+      requestAnimationFrame(draw);
+    }
+    draw();
+  }
+});
+</script>
+
+
+<script>
+if ('webkitSpeechRecognition' in window) {
+  const recognition = new webkitSpeechRecognition();
+  recognition.lang = "en-US";
+  recognition.continuous = true;
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  recognition.onresult = function(event) {
+    const result = event.results[event.results.length - 1][0].transcript.trim();
+    console.log("🎙️ Voice heard:", result);
+    localStorage.setItem("lastVoice", result);
+  };
+
+  recognition.onerror = function(event) {
+    console.warn("Voice error:", event.error);
+  };
+
+  recognition.start();
+}
+</script>
+
+
+<script>
+const micToggle = document.getElementById("micControlToggle");
+micToggle.checked = localStorage.getItem("micEnabled") === "on";
+
+micToggle.onchange = () => {
+  const enabled = micToggle.checked;
+  localStorage.setItem("micEnabled", enabled ? "on" : "off");
+  if (enabled && 'webkitSpeechRecognition' in window) {
+    const recognition = new webkitSpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.continuous = true;
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onresult = function(event) {
+      const result = event.results[event.results.length - 1][0].transcript.trim();
+      console.log("🎙️ Voice Heard (via settings):", result);
+      localStorage.setItem("lastVoice", result);
+    };
+
+    recognition.onerror = function(event) {
+      console.warn("Mic Error:", event.error);
+    };
+
+    recognition.start();
+  }
+};
+</script>
+
+
+<div class="setting">
+  Microphone (Global Voice Control)
+  <span class="toggle">
+    <input type="checkbox" id="micControlToggle" />
+  </span>
+</div>
+
+</body>
+</html>
