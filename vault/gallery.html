@@ -1,0 +1,117 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Trick Gallery</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      background: #111;
+      color: white;
+      font-family: sans-serif;
+      padding: 2em;
+      text-align: center;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 2em;
+      margin-top: 2em;
+    }
+    .tile {
+      background: #222;
+      border-radius: 12px;
+      padding: 2em;
+      border: 1px solid #444;
+      color: #aaa;
+    }
+    .tile h2 {
+      margin-top: 0;
+    }
+  </style>
+<script src='/scripts/fractal.js'></script>
+</head>
+<body>
+  <h1>🪄 EchoMind Trick Vault</h1>
+  <p>This area displays unlocked effects and upcoming modules.</p>
+
+  <div class="grid">
+    <div class="tile">
+      <h2>🧠 Mind Reader</h2>
+      <p>Unlocked</p>
+    </div>
+    <div class="tile">
+      <h2>🔎 Google Peek</h2>
+      <p>Unlocked</p>
+    </div>
+    <div class="tile">
+      <h2>🎴 The Call</h2>
+      <p>Coming Soon</p>
+    </div>
+    <div class="tile">
+      <h2>🧩 Dual Device</h2>
+      <p>Coming Soon</p>
+    </div>
+    <div class="tile">
+      <h2>🗝️ Cipher Trick</h2>
+      <p>Coming Soon</p>
+    </div>
+  </div>
+
+<script>
+window.addEventListener("load", () => {
+  if (!document.getElementById("fractalBg")) {
+    const canvas = document.createElement("canvas");
+    canvas.id = "fractalBg";
+    canvas.style.position = "fixed";
+    canvas.style.top = 0;
+    canvas.style.left = 0;
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    canvas.style.zIndex = "-1";
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext("2d");
+
+    function draw() {
+      const w = canvas.width = window.innerWidth;
+      const h = canvas.height = window.innerHeight;
+      ctx.clearRect(0, 0, w, h);
+      for (let i = 0; i < 70; i++) {
+        ctx.beginPath();
+        ctx.arc(Math.random() * w, Math.random() * h, Math.random() * 60, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${Math.random() * 360}, 100%, 70%, 0.12)`;
+        ctx.fill();
+      }
+      requestAnimationFrame(draw);
+    }
+    draw();
+  }
+});
+</script>
+
+
+<script>
+if ('webkitSpeechRecognition' in window) {
+  const recognition = new webkitSpeechRecognition();
+  recognition.lang = "en-US";
+  recognition.continuous = true;
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  recognition.onresult = function(event) {
+    const result = event.results[event.results.length - 1][0].transcript.trim();
+    console.log("🎙️ Voice heard:", result);
+    localStorage.setItem("lastVoice", result);
+  };
+
+  recognition.onerror = function(event) {
+    console.warn("Voice error:", event.error);
+  };
+
+  recognition.start();
+}
+</script>
+
+</body>
+</html>
