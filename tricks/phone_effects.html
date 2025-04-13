@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    font-family: system-ui, sans-serif;
+  }
+  canvas#fractalBg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+  }
+  * {
+    box-sizing: border-box;
+  }
+</style>
+
+  <meta charset="UTF-8" />
+  <title>Phone_Effects Menu</title>
+  <style>
+    body {
+      background: #0b0b0b;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding-top: 80px;
+    }
+    h1 {
+      font-size: 2em;
+      color: #ffe066;
+      text-shadow: 0 0 10px gold;
+    }
+    a {
+      display: inline-block;
+      margin: 15px;
+      padding: 12px 20px;
+      background: #1a1a3d;
+      color: white;
+      border: 2px solid gold;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 1.1em;
+      box-shadow: 0 0 10px gold;
+    }
+    a:hover {
+      background: #333;
+      box-shadow: 0 0 20px #ffd700;
+    }
+  </style>
+
+<style>
+canvas#fractalBg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+}
+</style>
+<script>
+window.onload = function () {
+  const canvas = document.createElement("canvas");
+  canvas.id = "fractalBg";
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  let t = 0;
+  function drawFractal() {
+    let w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    for (let i = 0; i < 200; i++) {
+      let x = w / 2 + Math.sin(i * 0.1 + t) * i * 0.8;
+      let y = h / 2 + 90 + Math.cos(i * 0.1 + t) * i * 0.8;
+      ctx.fillStyle = `hsl(${(t * 50 + i * 2) % 360}, 100%, ${30 + i % 50}%)`;
+      ctx.beginPath();
+      ctx.arc(x, y, 2 + (i % 3), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    t += 0.01;
+    requestAnimationFrame(drawFractal);
+  }
+  drawFractal();
+};
+</script>
+
+<script src='/scripts/fractal.js'></script>
+</head>
+<body style="background: radial-gradient(circle at center, #2d004d 0%, #000000 100%); color: white;">
+  <h1>Phone Effects</h1>
+  <a href="phone_effects/vibrate_trick.html">Vibrate Trick</a>
+  <a href="phone_effects/phone_peek.html">Phone Peek</a>
+
+<script>
+window.addEventListener("load", () => {
+  if (!document.getElementById("fractalBg")) {
+    const canvas = document.createElement("canvas");
+    canvas.id = "fractalBg";
+    canvas.style.position = "fixed";
+    canvas.style.top = 0;
+    canvas.style.left = 0;
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    canvas.style.zIndex = "-1";
+    document.body.appendChild(canvas);
+    const ctx = canvas.getContext("2d");
+
+    function draw() {
+      const w = canvas.width = window.innerWidth;
+      const h = canvas.height = window.innerHeight;
+      ctx.clearRect(0, 0, w, h);
+      for (let i = 0; i < 70; i++) {
+        ctx.beginPath();
+        ctx.arc(Math.random() * w, Math.random() * h, Math.random() * 60, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${Math.random() * 360}, 100%, 70%, 0.12)`;
+        ctx.fill();
+      }
+      requestAnimationFrame(draw);
+    }
+    draw();
+  }
+});
+</script>
+
+
+<script>
+if ('webkitSpeechRecognition' in window) {
+  const recognition = new webkitSpeechRecognition();
+  recognition.lang = "en-US";
+  recognition.continuous = true;
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+
+  recognition.onresult = function(event) {
+    const result = event.results[event.results.length - 1][0].transcript.trim();
+    console.log("🎙️ Voice heard:", result);
+    localStorage.setItem("lastVoice", result);
+  };
+
+  recognition.onerror = function(event) {
+    console.warn("Voice error:", event.error);
+  };
+
+  recognition.start();
+}
+</script>
+
+</body></html>
