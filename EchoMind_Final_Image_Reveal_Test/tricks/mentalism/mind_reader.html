@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🔁 EchoMind - Auto-Restart Mic</title>
+  
+<style>
+  body {
+    background: #0b0b0b;
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    text-align: center;
+  }
+  h1 {
+    color: #ffe066;
+    text-shadow: 0 0 10px gold;
+  }
+  button {
+    font-size: 1.2em;
+    padding: 10px 20px;
+    margin: 15px;
+    background: #1a1a3d;
+    color: white;
+    border: 2px solid gold;
+    border-radius: 10px;
+  }
+  button:hover {
+    background: #333;
+  }
+  .controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #reveal {
+    margin-top: 30px;
+    font-size: 2em;
+    color: gold;
+    text-shadow: 0 0 10px gold;
+    max-width: 90vw;
+    word-wrap: break-word;
+  }
+</style>
+
+<div class="controls">
+  <button onclick="startListening()">🎙️ Start Listening</button>
+  <label style="margin-top:10px;">
+    <input type="checkbox" id="keepListening" />
+    ♻️ Keep Listening
+  </label>
+</div>
+<div id="reveal"></div>
+
+
+
+<label style="margin-top:20px; display:block;">
+  <input type="checkbox" id="keepListening" /> ♻️ Keep Listening
+</label>
+<label style="margin-top:10px; display:block;">
+  <input type="checkbox" id="hideUI" /> 🕶️ Hide everything behind the reveal
+</label>
+
+
+<script>
+  const cardMap = {
+  "ace of hearts": "Ace of Hearts",
+  "two of hearts": "Two of Hearts",
+  "three of hearts": "Three of Hearts",
+  "four of hearts": "Four of Hearts",
+  "five of hearts": "Five of Hearts",
+  "six of hearts": "Six of Hearts",
+  "seven of hearts": "Seven of Hearts",
+  "eight of hearts": "Eight of Hearts",
+  "nine of hearts": "Nine of Hearts",
+  "ten of hearts": "Ten of Hearts",
+  "jack of hearts": "Jack of Hearts",
+  "queen of hearts": "Queen of Hearts",
+  "king of hearts": "King of Hearts",
+  "ace of diamonds": "Ace of Diamonds",
+  "two of diamonds": "Two of Diamonds",
+  "three of diamonds": "Three of Diamonds",
+  "four of diamonds": "Four of Diamonds",
+  "five of diamonds": "Five of Diamonds",
+  "six of diamonds": "Six of Diamonds",
+  "seven of diamonds": "Seven of Diamonds",
+  "eight of diamonds": "Eight of Diamonds",
+  "nine of diamonds": "Nine of Diamonds",
+  "ten of diamonds": "Ten of Diamonds",
+  "jack of diamonds": "Jack of Diamonds",
+  "queen of diamonds": "Queen of Diamonds",
+  "king of diamonds": "King of Diamonds",
+  "ace of clubs": "Ace of Clubs",
+  "two of clubs": "Two of Clubs",
+  "three of clubs": "Three of Clubs",
+  "four of clubs": "Four of Clubs",
+  "five of clubs": "Five of Clubs",
+  "six of clubs": "Six of Clubs",
+  "seven of clubs": "Seven of Clubs",
+  "eight of clubs": "Eight of Clubs",
+  "nine of clubs": "Nine of Clubs",
+  "ten of clubs": "Ten of Clubs",
+  "jack of clubs": "Jack of Clubs",
+  "queen of clubs": "Queen of Clubs",
+  "king of clubs": "King of Clubs",
+  "ace of spades": "Ace of Spades",
+  "two of spades": "Two of Spades",
+  "three of spades": "Three of Spades",
+  "four of spades": "Four of Spades",
+  "five of spades": "Five of Spades",
+  "six of spades": "Six of Spades",
+  "seven of spades": "Seven of Spades",
+  "eight of spades": "Eight of Spades",
+  "nine of spades": "Nine of Spades",
+  "ten of spades": "Ten of Spades",
+  "jack of spades": "Jack of Spades",
+  "queen of spades": "Queen of Spades",
+  "king of spades": "King of Spades"
+};
+
+  function matchCard(text) {
+    const lower = text.toLowerCase();
+    for (const [phrase, card] of Object.entries(cardMap)) {
+      if (lower.includes(phrase)) return phrase.replace(/ /g, "_") + ".png";
+    }
+    return null;
+  }
+
+  let recognition;
+  let listening = false;
+  let tapCount = 0;
+  let lastTapTime = 0;
+
+  function startListening() {
+    if (listening) return;
+
+    const userLang = localStorage.getItem("echomind_lang") || navigator.language;
+    recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = userLang;
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onstart = () => {
+      listening = true;
+      document.getElementById("reveal").innerHTML = "🎙️ Listening...";
+    };
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      const cardFile = matchCard(transcript);
+      if (cardFile) {
+        showCard(cardFile);
+      } else {
+        document.getElementById("reveal").innerHTML = "❓ No match for: " + transcript;
+      }
+    };
+
+    recognition.onerror = (event) => {
+      document.getElementById("reveal").innerHTML = "❌ Mic error: " + event.error;
+    };
+
+    recognition.onend = () => {
+      listening = false;
+      if (document.getElementById("keepListening")?.checked) {
+        startListening();
+      } else {
+        document.getElementById("reveal").innerHTML += "<br>(Mic stopped)";
+      }
+    };
+
+    recognition.start();
+  }
+
+  function showCard(filename) {
+    document.getElementById("interface").style.display = document.getElementById("hideUI")?.checked ? "none" : "block";
+    document.getElementById("reveal").innerHTML = '<img src="/assets/cards/PNG-cards-1.3/' + filename + '" alt="' + filename + '" style="width:65vw;max-width:350px;">';
+    new Audio("https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-reward-952.mp3").play();
+  }
+
+  document.addEventListener("click", handleTripleTap);
+  document.addEventListener("touchend", handleTripleTap);
+
+  function handleTripleTap() {
+    const now = new Date().getTime();
+    if (now - lastTapTime < 1000) {
+      tapCount++;
+      if (tapCount === 3) {
+        window.location.href = '../mentalism.html';
+      }
+    } else {
+      tapCount = 1;
+    }
+    lastTapTime = now;
+  }
+</script>
+
+</body></html>
