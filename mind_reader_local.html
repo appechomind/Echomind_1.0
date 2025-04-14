@@ -1,0 +1,163 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🃏 EchoMind - Local Card Deck Reveal</title>
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    body {
+      background: #121212;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding-top: 40px;
+    }
+    #cardArea {
+      perspective: 1000px;
+      width: 200px;
+      height: 280px;
+      margin: 40px auto;
+      position: relative;
+      cursor: pointer;
+    }
+    #cardReveal {
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 1s;
+      transform: rotateY(0deg);
+      position: relative;
+    }
+    #cardReveal.flipped {
+      transform: rotateY(180deg);
+    }
+    #cardReveal img {
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 10px;
+      border: 2px solid #ffe066;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    #cardBack {
+      transform: rotateY(180deg);
+    }
+    #log {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #ccc;
+      white-space: pre-line;
+      max-width: 95%;
+      margin: 0 auto;
+    }
+  </style>
+
+<style>
+canvas#fractalBg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+}
+</style>
+<script>
+window.onload = function () {
+  const canvas = document.createElement("canvas");
+  canvas.id = "fractalBg";
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  let t = 0;
+  function drawFractal() {
+    let w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    for (let i = 0; i < 200; i++) {
+      let x = w / 2 + Math.sin(i * 0.1 + t) * i * 0.8;
+      let y = h / 2 + 90 + Math.cos(i * 0.1 + t) * i * 0.8;
+      ctx.fillStyle = `hsl(${(t * 50 + i * 2) % 360}, 100%, ${30 + i % 50}%)`;
+      ctx.beginPath();
+      ctx.arc(x, y, 2 + (i % 3), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    t += 0.01;
+    requestAnimationFrame(drawFractal);
+  }
+  drawFractal();
+};
+</script>
+
+</head>
+<body>
+  <h1>🧙 EchoMind: Local Card Reveal</h1>
+  <p>Say: "what card are you thinking of", then any card name.<br>🖱 Click or 👆 Tap to flip manually</p>
+
+  <div id="cardArea" onclick="flipCardVisual()">
+    <div id="cardReveal">
+      <img id="cardFront" src="" style="display:none;" />
+      <img id="cardBack" src="../images/back.png" />
+    </div>
+  </div>
+
+  <div id="log">🎤 Listening...</div>
+
+  <script>
+    const cardMap = {
+      "ace of spades": "ace_of_spades", "2 of spades": "2_of_spades", "3 of spades": "3_of_spades", "4 of spades": "4_of_spades",
+      "5 of spades": "5_of_spades", "6 of spades": "6_of_spades", "7 of spades": "7_of_spades", "8 of spades": "8_of_spades",
+      "9 of spades": "9_of_spades", "10 of spades": "10_of_spades", "jack of spades": "jack_of_spades",
+      "queen of spades": "queen_of_spades", "king of spades": "king_of_spades",
+      "ace of hearts": "ace_of_hearts", "2 of hearts": "2_of_hearts", "3 of hearts": "3_of_hearts", "4 of hearts": "4_of_hearts",
+      "5 of hearts": "5_of_hearts", "6 of hearts": "6_of_hearts", "7 of hearts": "7_of_hearts", "8 of hearts": "8_of_hearts",
+      "9 of hearts": "9_of_hearts", "10 of hearts": "10_of_hearts", "jack of hearts": "jack_of_hearts",
+      "queen of hearts": "queen_of_hearts", "king of hearts": "king_of_hearts",
+      "ace of clubs": "ace_of_clubs", "2 of clubs": "2_of_clubs", "3 of clubs": "3_of_clubs", "4 of clubs": "4_of_clubs",
+      "5 of clubs": "5_of_clubs", "6 of clubs": "6_of_clubs", "7 of clubs": "7_of_clubs", "8 of clubs": "8_of_clubs",
+      "9 of clubs": "9_of_clubs", "10 of clubs": "10_of_clubs", "jack of clubs": "jack_of_clubs",
+      "queen of clubs": "queen_of_clubs", "king of clubs": "king_of_clubs",
+      "ace of diamonds": "ace_of_diamonds", "2 of diamonds": "2_of_diamonds", "3 of diamonds": "3_of_diamonds",
+      "4 of diamonds": "4_of_diamonds", "5 of diamonds": "5_of_diamonds", "6 of diamonds": "6_of_diamonds",
+      "7 of diamonds": "7_of_diamonds", "8 of diamonds": "8_of_diamonds", "9 of diamonds": "9_of_diamonds",
+      "10 of diamonds": "10_of_diamonds", "jack of diamonds": "jack_of_diamonds",
+      "queen of diamonds": "queen_of_diamonds", "king of diamonds": "king_of_diamonds"
+    };
+
+    let recognition;
+    let awaitingCard = false;
+    let restarting = false;
+    let lastCardName = "";
+    const log = document.getElementById("log");
+    const cardFront = document.getElementById("cardFront");
+    const cardReveal = document.getElementById("cardReveal");
+
+    function flipCardVisual() {
+      if (!cardFront.src) {
+        log.innerText += "\n⚠️ No card loaded.";
+        return;
+      }
+      cardReveal.classList.toggle("flipped");
+      log.innerText += "\n🃏 Flip: " + lastCardName;
+    }
+
+    function flipCard(imageFile, cardName) {
+      const path = "../images/cards/" + imageFile + ".png";
+      cardFront.src = path;
+      cardFront.style.display = "block";
+      lastCardName = cardName;
+      cardReveal.classList.remove("flipped");
+      setTimeout(() => {
+        cardReveal.classList.add("flipped");
+        log.innerText = "🎉 Revealed: " + lastCardName + "\n🖼 File: " + imageFile + ".png";
+      }, 500);
+    }
+
+    window.onload = () => {
+      log.innerText = "🎧 Mic is mocked in this version (local test). Say a card out loud or click to flip.";
+    };
+  </script>
+</body>
+</html>

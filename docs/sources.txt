@@ -1,8 +1,0 @@
-Sources Used in Google Peek Trick:
-
-https://www.gregrostami.com/inject2
-https://www.magicshop.co.uk/blogs/news/bondoogle-google-mentalism
-https://github.com/ashish-chopra/google-homepage-clone
-https://github.com/jakejarvis/google-suggestion-clone
-https://www.illuminatimagic.com/products/second-sight
-https://magicshow.tips/mentalism/how-google-peek-inject-2-works

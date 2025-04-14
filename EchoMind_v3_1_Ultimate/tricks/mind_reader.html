@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+    <html><head><title>Mind Reader – EchoMind</title><link rel="stylesheet" href="assets/style.css">
+<style>
+canvas#fractalBg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+}
+</style>
+<script>
+window.onload = function () {
+  const canvas = document.createElement("canvas");
+  canvas.id = "fractalBg";
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  let t = 0;
+  function drawFractal() {
+    let w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    for (let i = 0; i < 200; i++) {
+      let x = w / 2 + Math.sin(i * 0.1 + t) * i * 0.8;
+      let y = h / 2 + 90 + Math.cos(i * 0.1 + t) * i * 0.8;
+      ctx.fillStyle = `hsl(${(t * 50 + i * 2) % 360}, 100%, ${30 + i % 50}%)`;
+      ctx.beginPath();
+      ctx.arc(x, y, 2 + (i % 3), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    t += 0.01;
+    requestAnimationFrame(drawFractal);
+  }
+  drawFractal();
+};
+</script>
+
+</head>
+    <body><div class="container"><h1>🔮 Mind Reader</h1>
+    <input id="numberInput" type="number" placeholder="Enter a number"><button onclick="reveal()">Reveal</button>
+    <div id="peek"></div><button onclick="reset()" id="resetBtn">Reset</button></div>
+    <script>
+    function reveal(){let num=document.getElementById("numberInput").value;let peek=document.getElementById("peek");peek.innerText=num;peek.style.display='block';setTimeout(()=>{peek.style.display='none';document.getElementById('resetBtn').style.display='block';},2000)}
+    function reset(){document.getElementById("numberInput").value='';document.getElementById("peek").innerText='';document.getElementById("resetBtn").style.display='none';}
+    </script></body></html>

@@ -1,0 +1,184 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🃏 EchoMind - Always Listening</title>
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    body {
+      background: #0d0d0d;
+      color: white;
+      text-align: center;
+      padding-top: 40px;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    #cardArea {
+      perspective: 1000px;
+      width: 200px;
+      margin: 40px auto;
+    }
+    #cardReveal {
+      width: 100%;
+      transform-style: preserve-3d;
+      transition: transform 1s;
+      transform: rotateY(0deg);
+    }
+    #cardReveal.flipped {
+      transform: rotateY(180deg);
+    }
+    #cardReveal img {
+      width: 100%;
+      backface-visibility: hidden;
+      border-radius: 10px;
+      border: 2px solid #ffe066;
+    }
+    #cardBack {
+      transform: rotateY(180deg);
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    #log {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #ccc;
+      white-space: pre-line;
+    }
+  </style>
+
+<style>
+canvas#fractalBg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+}
+</style>
+<script>
+window.onload = function () {
+  const canvas = document.createElement("canvas");
+  canvas.id = "fractalBg";
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  let t = 0;
+  function drawFractal() {
+    let w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    for (let i = 0; i < 200; i++) {
+      let x = w / 2 + Math.sin(i * 0.1 + t) * i * 0.8;
+      let y = h / 2 + 90 + Math.cos(i * 0.1 + t) * i * 0.8;
+      ctx.fillStyle = `hsl(${(t * 50 + i * 2) % 360}, 100%, ${30 + i % 50}%)`;
+      ctx.beginPath();
+      ctx.arc(x, y, 2 + (i % 3), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    t += 0.01;
+    requestAnimationFrame(drawFractal);
+  }
+  drawFractal();
+};
+</script>
+
+</head>
+<body>
+  <h1>🔮 EchoMind: Always-Listening Card Reveal</h1>
+  <p>Say: <strong>"what card are you thinking of"</strong> anytime<br>Then say any playing card like “king of clubs”</p>
+
+  <div id="cardArea">
+    <div id="cardReveal">
+      <img id="cardFront" src="" style="display:none;" />
+      <img id="cardBack" src="https://deckofcardsapi.com/static/img/back.png" />
+    </div>
+  </div>
+
+  <div id="log">🎤 Initializing...</div>
+
+  <script>
+    const cardMap = {
+      "ace of spades": "AS", "2 of spades": "2S", "3 of spades": "3S", "4 of spades": "4S",
+      "5 of spades": "5S", "6 of spades": "6S", "7 of spades": "7S", "8 of spades": "8S",
+      "9 of spades": "9S", "10 of spades": "0S", "jack of spades": "JS", "queen of spades": "QS", "king of spades": "KS",
+      "ace of hearts": "AH", "2 of hearts": "2H", "3 of hearts": "3H", "4 of hearts": "4H",
+      "5 of hearts": "5H", "6 of hearts": "6H", "7 of hearts": "7H", "8 of hearts": "8H",
+      "9 of hearts": "9H", "10 of hearts": "0H", "jack of hearts": "JH", "queen of hearts": "QH", "king of hearts": "KH",
+      "ace of clubs": "AC", "2 of clubs": "2C", "3 of clubs": "3C", "4 of clubs": "4C",
+      "5 of clubs": "5C", "6 of clubs": "6C", "7 of clubs": "7C", "8 of clubs": "8C",
+      "9 of clubs": "9C", "10 of clubs": "0C", "jack of clubs": "JC", "queen of clubs": "QC", "king of clubs": "KC",
+      "ace of diamonds": "AD", "2 of diamonds": "2D", "3 of diamonds": "3D", "4 of diamonds": "4D",
+      "5 of diamonds": "5D", "6 of diamonds": "6D", "7 of diamonds": "7D", "8 of diamonds": "8D",
+      "9 of diamonds": "9D", "10 of diamonds": "0D", "jack of diamonds": "JD", "queen of diamonds": "QD", "king of diamonds": "KD"
+    };
+
+    let recognition;
+    let awaitingCard = false;
+    const log = document.getElementById("log");
+    const cardFront = document.getElementById("cardFront");
+    const cardReveal = document.getElementById("cardReveal");
+
+    function flipCard(imageUrl, cardName) {
+      cardFront.src = imageUrl;
+      cardFront.style.display = "block";
+      cardReveal.classList.remove("flipped");
+      setTimeout(() => {
+        cardReveal.classList.add("flipped");
+        log.innerText = "🃏 Revealed: " + cardName;
+      }, 500);
+    }
+
+    function setupRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        log.innerText = "❌ Speech recognition not supported.";
+        return;
+      }
+
+      recognition = new SpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.continuous = true;
+      recognition.interimResults = false;
+
+      recognition.onresult = (event) => {
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript.trim().toLowerCase();
+          log.innerText = "🗣 " + transcript;
+
+          if (transcript.includes("what card are you thinking of")) {
+            awaitingCard = true;
+            log.innerText += "\n🎯 Ready for card name...";
+          } else if (awaitingCard) {
+            for (const spoken of Object.keys(cardMap)) {
+              if (transcript.includes(spoken)) {
+                const code = cardMap[spoken];
+                const imgUrl = `https://deckofcardsapi.com/static/img/${code}.png`;
+                localStorage.setItem("peek_message", spoken);
+                flipCard(imgUrl, spoken);
+                awaitingCard = false;
+                break;
+              }
+            }
+          }
+        }
+      };
+
+      recognition.onerror = (e) => {
+        log.innerText += "\n❌ Error: " + e.error;
+      };
+
+      recognition.onend = () => {
+        recognition.start(); // restart listener
+      };
+
+      recognition.start();
+      log.innerText = "🎧 Listening activated.";
+    }
+
+    window.onload = function () {
+      setTimeout(setupRecognition, 500);
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Settings – EchoMind</title>
+  <style>
+    body {
+      background: #000;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      overflow: hidden;
+    }
+    #settingsPanel {
+      margin: 60px auto;
+      padding: 30px;
+      width: 80%;
+      max-width: 500px;
+      background: rgba(30, 30, 60, 0.8);
+      border-radius: 20px;
+      box-shadow: 0 0 15px #5c4bc5;
+    }
+    h1 {
+      text-align: center;
+      color: #ffe066;
+    }
+    label {
+      display: flex;
+      align-items: center;
+      margin: 15px 0;
+      font-size: 1.2em;
+    }
+    input[type="checkbox"] {
+      margin-right: 10px;
+      transform: scale(1.2);
+    }
+    canvas#fractalBg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="fractalBg"></canvas>
+  <div id="settingsPanel">
+    <h1>Settings</h1>
+    <label><input type="checkbox" id="audioToggle"> Audio On</label>
+    <label><input type="checkbox" id="bgToggle"> DMT Fractal Background</label>
+    <label><input type="checkbox" id="modeToggle"> Performance Mode</label>
+  </div>
+  <script src="../scripts/fractal.js"></script>
+  <script src="../scripts/audio.js"></script>
+</body>
+</html>

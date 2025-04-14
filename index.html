@@ -1,17 +1,115 @@
 
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>EchoMind</title>
-  <link rel="stylesheet" href="assets/css/style.css" />
+<meta charset="utf-8"/>
+<title>EchoMind – Orb Menu</title>
+<link href="manifest.json" rel="manifest"/>
+<style>
+    body {
+      margin: 0;
+      background: #000;
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      overflow: hidden;
+    }
+    .background {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    .orb-grid {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .orb-center {
+      position: absolute;
+      font-size: 3em;
+      font-weight: bold;
+      color: white;
+    }
+    .orb {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #2b1d6e, #100935);
+      border: 2px solid #7f5ee9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.3s ease-in-out;
+    }
+    .orb:hover {
+      transform: scale(1.1);
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <h1>EchoMind - Trick Hub</h1>
-    <p>Choose a trick to begin:</p>
-    <a class="btn" href="tricks/mentalism/google_peek.html">🧠 Google Peek (Dual Device)</a>
-  </div>
+<canvas class="background" id="fractalBg"></canvas>
+<div class="orb-grid">
+<div class="orb-center">EchoMind</div>
+<div class="orb" onclick="location.href='submenus/dual_device.html'" style="top: 5%; left: 50%;">Duá-Device</div>
+<div class="orb" onclick="location.href='submenus/phone_effects.html'" style="top: 20%; left: 80%;">Phone Effects</div>
+<div class="orb" onclick="location.href='submenus/puzzles.html'" style="top: 55%; left: 90%;">Puzzles</div>
+<div class="orb" onclick="location.href='submenus/community.html'" style="top: 80%; left: 70%;">Community</div>
+<div class="orb" onclick="location.href='submenus/gizmo.html'" style="top: 85%; left: 30%;">Gizmo</div>
+<div class="orb" onclick="location.href='submenus/settings.html'" style="top: 70%; left: 10%;">Settings</div>
+<div class="orb" onclick="location.href='submenus/dont_click.html'" style="top: 35%; left: 0%;">Don't Click</div>
+<div class="orb" onclick="location.href='submenus/mentalism.html'" style="top: 5%; left: 20%;">Mentalism</div>
+</div>
+<script src="scripts/fractal.js"></script>
+<script>
+  // F1 key trigger for admin
+  document.addEventListener('keydown', e => {
+    if (e.key === 'F1') {
+      e.preventDefault();
+      window.location.href = 'admin.html';
+    }
+  });
+
+  // Swipe down gesture for admin panel
+  let touchStartY = null;
+  document.addEventListener('touchstart', e => {
+    touchStartY = e.touches[0].clientY;
+  });
+  document.addEventListener('touchend', e => {
+    const endY = e.changedTouches[0].clientY;
+    if (touchStartY !== null && endY - touchStartY > 200) {
+      window.location.href = 'admin.html';
+    }
+  });
+</script>
+
+<script>
+  // F1 key trigger for admin
+  document.addEventListener('keydown', e => {
+    if (e.key === 'F1') {
+      e.preventDefault();
+      window.location.href = 'admin.html';
+    }
+  });
+
+  // Swipe down gesture for admin panel
+  let touchStartY = null;
+  document.addEventListener('touchstart', e => {
+    touchStartY = e.touches[0].clientY;
+  });
+  document.addEventListener('touchend', e => {
+    const endY = e.changedTouches[0].clientY;
+    if (touchStartY !== null && endY - touchStartY > 200) {
+      window.location.href = 'admin.html';
+    }
+  });
+</script>
 </body>
 </html>

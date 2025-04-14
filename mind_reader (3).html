@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🃏 Voice Card Reader</title>
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    .container {
+      max-width: 600px;
+      margin: 40px auto;
+      text-align: center;
+    }
+    select, button {
+      font-size: 16px;
+      padding: 10px;
+      margin-top: 10px;
+      width: 100%;
+    }
+    img {
+      margin-top: 20px;
+      width: 120px;
+    }
+    #log {
+      color: #ffe066;
+      font-size: 18px;
+      margin-top: 10px;
+    }
+  </style>
+
+<style>
+canvas#fractalBg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+}
+</style>
+<script>
+window.onload = function () {
+  const canvas = document.createElement("canvas");
+  canvas.id = "fractalBg";
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  let t = 0;
+  function drawFractal() {
+    let w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    for (let i = 0; i < 200; i++) {
+      let x = w / 2 + Math.sin(i * 0.1 + t) * i * 0.8;
+      let y = h / 2 + 90 + Math.cos(i * 0.1 + t) * i * 0.8;
+      ctx.fillStyle = `hsl(${(t * 50 + i * 2) % 360}, 100%, ${30 + i % 50}%)`;
+      ctx.beginPath();
+      ctx.arc(x, y, 2 + (i % 3), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    t += 0.01;
+    requestAnimationFrame(drawFractal);
+  }
+  drawFractal();
+};
+</script>
+
+</head>
+<body>
+  <div class="container">
+    <h1>🃏 Voice Card Reader</h1>
+    <p>Select a card to force, or set to 'Random'.<br>When someone says <strong>'what card are you thinking of?'</strong> aloud, it will show that card.</p>
+    <select id="cardForce">
+      <option value="random">🎲 Random</option>
+      <option value="AS">♠ Ace of Spades</option>
+      <option value="KH">♥ King of Hearts</option>
+      <option value="QC">♣ Queen of Clubs</option>
+      <option value="JD">♦ Jack of Diamonds</option>
+      <!-- Add all 52 later -->
+    </select>
+    <button onclick="startListening()">🎙 Start Listening</button>
+    <div id="log">🎧 Awaiting voice input...</div>
+    <img id="cardImage" style="display:none;" />
+  </div>
+
+  <script>
+    let recognition;
+
+    const cardMap = {
+      "AS": "🂡",
+      "KH": "🂾",
+      "QC": "🃝",
+      "JD": "🃋"
+    };
+
+    function getForcedCard() {
+      const select = document.getElementById("cardForce");
+      const choice = select.value;
+      if (choice === "random") {
+        const options = Object.keys(cardMap);
+        return options[Math.floor(Math.random() * options.length)];
+      }
+      return choice;
+    }
+
+    function startListening() {
+      const log = document.getElementById("log");
+      const img = document.getElementById("cardImage");
+
+      if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+        alert('❌ Speech recognition is not supported in this browser.');
+        return;
+      }
+
+      recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = 'en-US';
+      recognition.continuous = true;
+      recognition.interimResults = false;
+
+      recognition.onresult = (event) => {
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript.trim().toLowerCase();
+          log.innerText = "🗣 Heard: " + transcript;
+
+          if (transcript.includes("what card are you thinking of")) {
+            const card = getForcedCard();
+            log.innerText = "🃏 Reveal: " + card;
+            img.style.display = "block";
+            img.src = `https://deckofcardsapi.com/static/img/${card}.png`;
+            localStorage.setItem("peek_message", card);
+          }
+        }
+      };
+
+      recognition.onerror = (e) => {
+        log.innerText = "❌ Error: " + e.error;
+      };
+
+      recognition.onend = () => {
+        recognition.start(); // restart if stopped
+      };
+
+      recognition.start();
+      log.innerText = "🎧 Listening for: 'what card are you thinking of?'";
+    }
+  </script>
+</body>
+</html>
