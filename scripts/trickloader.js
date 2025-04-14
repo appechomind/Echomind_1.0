@@ -1,9 +1,8 @@
 
 import { trick as appetite } from '../plugins/plugin.appetite.js';
-import { trick as call } from '../plugins/plugin.call.js';
 import { trick as mindreader } from '../plugins/plugin.mindreader.js';
 
-const allTricks = [appetite, call, mindreader];
+const allTricks = [appetite, mindreader];
 
 document.addEventListener('DOMContentLoaded', () => {
   const trickContainer = document.getElementById('trickContainer');
