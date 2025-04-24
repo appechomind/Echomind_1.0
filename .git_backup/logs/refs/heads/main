@@ -1,0 +1,3 @@
+0000000000000000000000000000000000000000 aa8a9e6610358e17004a5af2a76c3fbd5e9bf0e7 appechomind <app.echo.mind@gmail.com> 1744926984 -0600	clone: from https://github.com/appechomind/Echomind_1.0.git
+aa8a9e6610358e17004a5af2a76c3fbd5e9bf0e7 b4d3334b6e207d93d2aec968daef46006100c33d appechomind <app.echo.mind@gmail.com> 1745530650 -0600	pull origin main --allow-unrelated-histories: Fast-forward
+b4d3334b6e207d93d2aec968daef46006100c33d c164005b524f3a2a01236a147af1100809ff2966 appechomind <app.echo.mind@gmail.com> 1745530671 -0600	commit: Updated mind reader with improved microphone handling and fixed permissions

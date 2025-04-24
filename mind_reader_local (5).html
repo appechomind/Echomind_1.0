@@ -1,0 +1,174 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🃏 EchoMind - Stable Card Reveal</title>
+  <link rel="stylesheet" href="../assets/style.css">
+  <style>
+    body {
+      background: #0b0b0b;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding-top: 40px;
+    }
+    #cardArea {
+      perspective: 1000px;
+      width: 200px;
+      height: 280px;
+      margin: 40px auto;
+      position: relative;
+      cursor: pointer;
+    }
+    #cardReveal {
+      width: 100%;
+      height: 100%;
+      background: white;
+      border-radius: 12px;
+      border: 2px solid gold;
+      box-shadow: 0 0 20px #ffe066;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: bold;
+      color: #222;
+      backface-visibility: hidden;
+      transition: background 0.4s ease, transform 0.5s ease;
+    }
+    #log {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #ccc;
+      white-space: pre-line;
+      max-width: 95%;
+      margin: 0 auto;
+    }
+  </style>
+
+<style>
+canvas#fractalBg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+}
+</style>
+<script>
+window.onload = function () {
+  const canvas = document.createElement("canvas");
+  canvas.id = "fractalBg";
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  let t = 0;
+  function drawFractal() {
+    let w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    for (let i = 0; i < 200; i++) {
+      let x = w / 2 + Math.sin(i * 0.1 + t) * i * 0.8;
+      let y = h / 2 + 90 + Math.cos(i * 0.1 + t) * i * 0.8;
+      ctx.fillStyle = `hsl(${(t * 50 + i * 2) % 360}, 100%, ${30 + i % 50}%)`;
+      ctx.beginPath();
+      ctx.arc(x, y, 2 + (i % 3), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    t += 0.01;
+    requestAnimationFrame(drawFractal);
+  }
+  drawFractal();
+};
+</script>
+
+</head>
+<body>
+  <h1>🔮 EchoMind: Smooth Voice Reveal</h1>
+  <p>Say a card name like “King of Hearts” to reveal it instantly.</p>
+
+  <div id="cardArea">
+    <div id="cardReveal">Waiting...</div>
+  </div>
+
+  <div id="log">🎤 Initializing microphone...</div>
+
+  <script>
+    const cardMap = {
+      "ace of spades": "Ace of Spades", "2 of spades": "Two of Spades", "3 of spades": "Three of Spades", "4 of spades": "Four of Spades",
+      "5 of spades": "Five of Spades", "6 of spades": "Six of Spades", "7 of spades": "Seven of Spades", "8 of spades": "Eight of Spades",
+      "9 of spades": "Nine of Spades", "10 of spades": "Ten of Spades", "jack of spades": "Jack of Spades", "queen of spades": "Queen of Spades", "king of spades": "King of Spades",
+      "ace of hearts": "Ace of Hearts", "2 of hearts": "Two of Hearts", "3 of hearts": "Three of Hearts", "4 of hearts": "Four of Hearts",
+      "5 of hearts": "Five of Hearts", "6 of hearts": "Six of Hearts", "7 of hearts": "Seven of Hearts", "8 of hearts": "Eight of Hearts",
+      "9 of hearts": "Nine of Hearts", "10 of hearts": "Ten of Hearts", "jack of hearts": "Jack of Hearts", "queen of hearts": "Queen of Hearts", "king of hearts": "King of Hearts",
+      "ace of clubs": "Ace of Clubs", "2 of clubs": "Two of Clubs", "3 of clubs": "Three of Clubs", "4 of clubs": "Four of Clubs",
+      "5 of clubs": "Five of Clubs", "6 of clubs": "Six of Clubs", "7 of clubs": "Seven of Clubs", "8 of clubs": "Eight of Clubs",
+      "9 of clubs": "Nine of Clubs", "10 of clubs": "Ten of Clubs", "jack of clubs": "Jack of Clubs", "queen of clubs": "Queen of Clubs", "king of clubs": "King of Clubs",
+      "ace of diamonds": "Ace of Diamonds", "2 of diamonds": "Two of Diamonds", "3 of diamonds": "Three of Diamonds", "4 of diamonds": "Four of Diamonds",
+      "5 of diamonds": "Five of Diamonds", "6 of diamonds": "Six of Diamonds", "7 of diamonds": "Seven of Diamonds", "8 of diamonds": "Eight of Diamonds",
+      "9 of diamonds": "Nine of Diamonds", "10 of diamonds": "Ten of Diamonds", "jack of diamonds": "Jack of Diamonds", "queen of diamonds": "Queen of Diamonds", "king of diamonds": "King of Diamonds"
+    };
+
+    let recognition;
+    let micStarted = false;
+    const cardReveal = document.getElementById("cardReveal");
+    const log = document.getElementById("log");
+
+    function revealCard(cardText) {
+      cardReveal.textContent = cardText;
+      localStorage.setItem("peek_message", cardText);
+      log.innerText += "\n🎉 Card recognized: " + cardText;
+    }
+
+    function setupRecognitionOnce() {
+      if (micStarted) return;
+      micStarted = true;
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        log.innerText = "❌ Speech recognition not supported.";
+        return;
+      }
+
+      recognition = new SpeechRecognition();
+      recognition.lang = 'en-US';
+      recognition.continuous = true;
+      recognition.interimResults = false;
+
+      recognition.onresult = (event) => {
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript.trim().toLowerCase();
+          log.innerText += "\n🗣 " + transcript;
+
+          for (const spoken in cardMap) {
+            if (transcript.includes(spoken)) {
+              revealCard(cardMap[spoken]);
+              break;
+            }
+          }
+        }
+      };
+
+      recognition.onerror = (e) => {
+        log.innerText += "\n⚠️ Mic error: " + e.error;
+      };
+
+      recognition.onend = () => {
+        log.innerText += "\n🔕 Mic stopped. Refresh page to restart.";
+      };
+
+      try {
+        recognition.start();
+        log.innerText = "🎧 Mic started. Say a card name to reveal.";
+      } catch (err) {
+        log.innerText = "❌ Mic error: " + err.message;
+      }
+    }
+
+    window.onload = () => {
+      setTimeout(setupRecognitionOnce, 500);
+    };
+  </script>
+</body>
+</html>

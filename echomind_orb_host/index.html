@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EchoMind Orb Menu</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#000000">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(circle at center, #1b1b2f 0%, #0b0b0b 100%);
+      overflow: hidden;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: white;
+    }
+    .center h1 {
+      font-size: 3em;
+      color: #fff;
+      text-shadow: 0 0 20px gold;
+    }
+    .orb {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      background: #1a1a3d;
+      border: 2px solid #6af6ff;
+      border-radius: 50%;
+      box-shadow: 0 0 12px #6af6ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+      font-weight: bold;
+      transition: transform 0.3s, box-shadow 0.3s;
+      text-decoration: none;
+    }
+    .orb:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px gold;
+    }
+  </style>
+
+<style>
+canvas#fractalBg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+}
+</style>
+<script>
+window.onload = function () {
+  const canvas = document.createElement("canvas");
+  canvas.id = "fractalBg";
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  let t = 0;
+  function drawFractal() {
+    let w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    for (let i = 0; i < 200; i++) {
+      let x = w / 2 + Math.sin(i * 0.1 + t) * i * 0.8;
+      let y = h / 2 + 90 + Math.cos(i * 0.1 + t) * i * 0.8;
+      ctx.fillStyle = `hsl(${(t * 50 + i * 2) % 360}, 100%, ${30 + i % 50}%)`;
+      ctx.beginPath();
+      ctx.arc(x, y, 2 + (i % 3), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    t += 0.01;
+    requestAnimationFrame(drawFractal);
+  }
+  drawFractal();
+};
+</script>
+
+</head>
+<body>
+  <div class="center">
+    <h1>EchoMind</h1>
+  </div>
+
+  <a href="tricks/mentalism.html" class="orb" style="top:10%;left:50%;">Mentalism</a>
+  <a href="tricks/dua_device.html" class="orb" style="top:25%;left:80%;">Duá-Device</a>
+  <a href="tricks/phone_effects.html" class="orb" style="top:50%;left:95%;">Phone Effects</a>
+  <a href="tricks/puzzles.html" class="orb" style="top:75%;left:80%;">Puzzles</a>
+  <a href="tricks/community.html" class="orb" style="top:90%;left:50%;">Community</a>
+  <a href="tricks/gizmo.html" class="orb" style="top:75%;left:20%;">Gizmo</a>
+  <a href="tricks/settings.html" class="orb" style="top:50%;left:5%;">Settings</a>
+  <a href="tricks/dont_click.html" class="orb" style="top:25%;left:20%;">Don't Click</a>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js').catch(console.error);
+    }
+  </script>
+</body>
+</html>
