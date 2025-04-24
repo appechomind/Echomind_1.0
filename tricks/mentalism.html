@@ -1,19 +1,228 @@
-<html><head>
-<style>
-  body {
-    margin: 0; padding: 0;
-    background: #0b0b0b;
-    overflow-x: hidden;
-    font-family: system-ui, sans-serif;
-    color: white;
-    text-align: center;
-  }
-  canvas#fractalBg {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: -1;
-  }
-</style>
-</head><body><canvas id="fractalBg"></canvas><h1>Mentalism</h1><script src="scripts/fractal.js"></script><script src="scripts/audio.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🧠 EchoMind - Mentalism</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --orb-size: min(28vw, 120px);
+      --gold-glow: #ffe066;
+      --bg-dark: #0b0b0b;
+    }
+
+    body {
+      background: var(--bg-dark);
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      color: gold;
+      text-shadow: 0 0 10px gold;
+      margin-bottom: 40px;
+      font-size: 2.5em;
+      animation: titleGlow 3s infinite alternate;
+    }
+
+    .back-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      color: white;
+      text-decoration: none;
+      font-size: 1.5em;
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.5);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid gold;
+      transition: all 0.3s ease;
+    }
+
+    .back-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 15px var(--gold-glow);
+    }
+
+    .orb-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(var(--orb-size), 1fr));
+      gap: 20px;
+      max-width: 90vw;
+      width: 100%;
+      padding: 20px;
+      justify-items: center;
+    }
+
+    .orb {
+      background: radial-gradient(circle at 30% 30%, #444, #111);
+      width: var(--orb-size);
+      height: var(--orb-size);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+      font-size: 0.9em;
+      border: 2px solid gold;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+      padding: 10px;
+    }
+
+    .orb::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at center, transparent 30%, rgba(255, 215, 0, 0.1) 70%);
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.3s ease-out;
+    }
+
+    .orb:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 30px var(--gold-glow);
+    }
+
+    .orb:hover::before {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .orb span {
+      z-index: 1;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    @keyframes titleGlow {
+      0% { text-shadow: 0 0 10px gold; }
+      100% { text-shadow: 0 0 20px gold, 0 0 40px var(--gold-glow); }
+    }
+
+    @keyframes orbFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .orb {
+      animation: orbFloat 3s infinite ease-in-out;
+      animation-delay: calc(var(--delay) * 0.2s);
+    }
+
+    #fractalBg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      opacity: 0.5;
+    }
+
+    @media (max-width: 600px) {
+      .orb-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      h1 {
+        font-size: 2em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="../index.html" class="back-button">←</a>
+  <h1>🧠 Mentalism</h1>
+  <div class="orb-grid">
+    <a href="mentalism/mind_reader.html" class="orb" style="--delay: 0">
+      <span>Mind Reader</span>
+    </a>
+    <a href="mentalism/which_hand.html" class="orb" style="--delay: 1">
+      <span>Which Hand?</span>
+    </a>
+    <a href="mentalism/thought_reveal.html" class="orb" style="--delay: 2">
+      <span>Thought Reveal</span>
+    </a>
+    <a href="mentalism/voice_force.html" class="orb" style="--delay: 3">
+      <span>Voice Force</span>
+    </a>
+    <a href="mentalism/peek_mode.html" class="orb" style="--delay: 4">
+      <span>Peek Mode</span>
+    </a>
+    <a href="mentalism/universal_force.html" class="orb" style="--delay: 5">
+      <span>Universal Force</span>
+    </a>
+  </div>
+
+  <script>
+    // Fractal Background Animation
+    window.onload = function() {
+      const canvas = document.createElement('canvas');
+      canvas.id = 'fractalBg';
+      document.body.appendChild(canvas);
+      const ctx = canvas.getContext('2d');
+      
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      let t = 0;
+      function drawFractal() {
+        let w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+        
+        for (let i = 0; i < 200; i++) {
+          let x = w/2 + Math.sin(i * 0.1 + t) * i * 0.8;
+          let y = h/2 + Math.cos(i * 0.1 + t) * i * 0.8;
+          
+          ctx.fillStyle = `hsla(${(t * 50 + i * 2) % 360}, 100%, ${30 + i % 50}%, 0.5)`;
+          ctx.beginPath();
+          ctx.arc(x, y, 2 + (i % 3), 0, Math.PI * 2);
+          ctx.fill();
+        }
+        
+        t += 0.01;
+        requestAnimationFrame(drawFractal);
+      }
+      
+      drawFractal();
+    };
+
+    // Add touch feedback for mobile
+    document.querySelectorAll('.orb').forEach(orb => {
+      orb.addEventListener('touchstart', function() {
+        this.style.transform = 'scale(0.95)';
+      });
+      
+      orb.addEventListener('touchend', function() {
+        this.style.transform = '';
+      });
+    });
+  </script>
+</body>
+</html>

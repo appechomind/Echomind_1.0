@@ -1,115 +1,192 @@
-
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<title>EchoMind – Orb Menu</title>
-<link href="manifest.json" rel="manifest"/>
-<style>
+  <meta charset="UTF-8">
+  <title>🔮 EchoMind OS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
+  <style>
+    :root {
+      --orb-size: min(28vw, 120px);
+      --gold-glow: #ffe066;
+      --bg-dark: #0b0b0b;
+    }
+
     body {
-      margin: 0;
-      background: #000;
-      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg-dark);
       color: white;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      color: gold;
+      text-shadow: 0 0 10px gold;
+      margin-bottom: 40px;
+      font-size: 2.5em;
+      animation: titleGlow 3s infinite alternate;
+    }
+
+    .orb-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(var(--orb-size), 1fr));
+      gap: 20px;
+      max-width: 90vw;
+      width: 100%;
+      padding: 20px;
+      justify-items: center;
+    }
+
+    .orb {
+      background: radial-gradient(circle at 30% 30%, #444, #111);
+      width: var(--orb-size);
+      height: var(--orb-size);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-decoration: none;
+      color: white;
+      font-weight: bold;
+      font-size: 0.9em;
+      border: 2px solid gold;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
       overflow: hidden;
     }
-    .background {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-    }
-    .orb-grid {
+
+    .orb::before {
+      content: '';
       position: absolute;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at center, transparent 30%, rgba(255, 215, 0, 0.1) 70%);
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.3s ease-out;
     }
-    .orb-center {
-      position: absolute;
-      font-size: 3em;
-      font-weight: bold;
-      color: white;
-    }
-    .orb {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      background: radial-gradient(circle, #2b1d6e, #100935);
-      border: 2px solid #7f5ee9;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: absolute;
-      text-align: center;
-      cursor: pointer;
-      transition: 0.3s ease-in-out;
-    }
+
     .orb:hover {
       transform: scale(1.1);
+      box-shadow: 0 0 30px var(--gold-glow);
+    }
+
+    .orb:hover::before {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .orb span {
+      z-index: 1;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    @keyframes titleGlow {
+      0% { text-shadow: 0 0 10px gold; }
+      100% { text-shadow: 0 0 20px gold, 0 0 40px var(--gold-glow); }
+    }
+
+    @keyframes orbFloat {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .orb {
+      animation: orbFloat 3s infinite ease-in-out;
+      animation-delay: calc(var(--delay) * 0.2s);
+    }
+
+    #fractalBg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      opacity: 0.5;
+    }
+
+    @media (max-width: 600px) {
+      .orb-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      h1 {
+        font-size: 2em;
+      }
     }
   </style>
 </head>
 <body>
-<canvas class="background" id="fractalBg"></canvas>
-<div class="orb-grid">
-<div class="orb-center">EchoMind</div>
-<div class="orb" onclick="location.href='submenus/dual_device.html'" style="top: 5%; left: 50%;">Duá-Device</div>
-<div class="orb" onclick="location.href='submenus/phone_effects.html'" style="top: 20%; left: 80%;">Phone Effects</div>
-<div class="orb" onclick="location.href='submenus/puzzles.html'" style="top: 55%; left: 90%;">Puzzles</div>
-<div class="orb" onclick="location.href='submenus/community.html'" style="top: 80%; left: 70%;">Community</div>
-<div class="orb" onclick="location.href='submenus/gizmo.html'" style="top: 85%; left: 30%;">Gizmo</div>
-<div class="orb" onclick="location.href='submenus/settings.html'" style="top: 70%; left: 10%;">Settings</div>
-<div class="orb" onclick="location.href='submenus/dont_click.html'" style="top: 35%; left: 0%;">Don't Click</div>
-<div class="orb" onclick="location.href='submenus/mentalism.html'" style="top: 5%; left: 20%;">Mentalism</div>
-</div>
-<script src="scripts/fractal.js"></script>
-<script>
-  // F1 key trigger for admin
-  document.addEventListener('keydown', e => {
-    if (e.key === 'F1') {
-      e.preventDefault();
-      window.location.href = 'admin.html';
-    }
-  });
+  <h1>🔮 EchoMind</h1>
+  <div class="orb-grid">
+    <a href="tricks/mentalism.html" class="orb" style="--delay: 0"><span>Mentalism</span></a>
+    <a href="tricks/dual_device.html" class="orb" style="--delay: 1"><span>Dual Device</span></a>
+    <a href="tricks/phone_effects.html" class="orb" style="--delay: 2"><span>Phone FX</span></a>
+    <a href="tricks/puzzles.html" class="orb" style="--delay: 3"><span>Puzzles</span></a>
+    <a href="tricks/community.html" class="orb" style="--delay: 4"><span>Community</span></a>
+    <a href="tricks/gizmo.html" class="orb" style="--delay: 5"><span>Gizmo</span></a>
+    <a href="tricks/settings.html" class="orb" style="--delay: 6"><span>Settings</span></a>
+    <a href="tricks/dont_click.html" class="orb" style="--delay: 7"><span>Don't Click</span></a>
+  </div>
 
-  // Swipe down gesture for admin panel
-  let touchStartY = null;
-  document.addEventListener('touchstart', e => {
-    touchStartY = e.touches[0].clientY;
-  });
-  document.addEventListener('touchend', e => {
-    const endY = e.changedTouches[0].clientY;
-    if (touchStartY !== null && endY - touchStartY > 200) {
-      window.location.href = 'admin.html';
-    }
-  });
-</script>
+  <script>
+    // Fractal Background Animation
+    window.onload = function() {
+      const canvas = document.createElement('canvas');
+      canvas.id = 'fractalBg';
+      document.body.appendChild(canvas);
+      const ctx = canvas.getContext('2d');
+      
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
 
-<script>
-  // F1 key trigger for admin
-  document.addEventListener('keydown', e => {
-    if (e.key === 'F1') {
-      e.preventDefault();
-      window.location.href = 'admin.html';
-    }
-  });
+      let t = 0;
+      function drawFractal() {
+        let w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+        
+        for (let i = 0; i < 200; i++) {
+          let x = w/2 + Math.sin(i * 0.1 + t) * i * 0.8;
+          let y = h/2 + Math.cos(i * 0.1 + t) * i * 0.8;
+          
+          ctx.fillStyle = `hsla(${(t * 50 + i * 2) % 360}, 100%, ${30 + i % 50}%, 0.5)`;
+          ctx.beginPath();
+          ctx.arc(x, y, 2 + (i % 3), 0, Math.PI * 2);
+          ctx.fill();
+        }
+        
+        t += 0.01;
+        requestAnimationFrame(drawFractal);
+      }
+      
+      drawFractal();
+    };
 
-  // Swipe down gesture for admin panel
-  let touchStartY = null;
-  document.addEventListener('touchstart', e => {
-    touchStartY = e.touches[0].clientY;
-  });
-  document.addEventListener('touchend', e => {
-    const endY = e.changedTouches[0].clientY;
-    if (touchStartY !== null && endY - touchStartY > 200) {
-      window.location.href = 'admin.html';
-    }
-  });
-</script>
+    // Add touch feedback for mobile
+    document.querySelectorAll('.orb').forEach(orb => {
+      orb.addEventListener('touchstart', function() {
+        this.style.transform = 'scale(0.95)';
+      });
+      
+      orb.addEventListener('touchend', function() {
+        this.style.transform = '';
+      });
+    });
+  </script>
 </body>
 </html>

@@ -1,37 +1,18 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Gizmo Menu</title>
+  <meta charset="UTF-8">
+  <title>Card Force</title>
   <style>
-    body {
-      background: #0b0b0b;
-      color: white;
-      font-family: 'Segoe UI', sans-serif;
-      text-align: center;
-      padding-top: 80px;
+    body { background: #0b0b0b; color: white; text-align: center; font-family: sans-serif; padding-top: 80px; }
+    .card { font-size: 2em; color: gold; margin-top: 30px; }
+    button {
+      font-size: 1.2em; padding: 10px 20px;
+      background: #1a1a3d; color: white;
+      border: 2px solid gold; border-radius: 10px;
     }
-    h1 {
-      font-size: 2em;
-      color: #ffe066;
-      text-shadow: 0 0 10px gold;
-    }
-    a {
-      display: inline-block;
-      margin: 15px;
-      padding: 12px 20px;
-      background: #1a1a3d;
-      color: white;
-      border: 2px solid gold;
-      border-radius: 8px;
-      text-decoration: none;
-      font-size: 1.1em;
-      box-shadow: 0 0 10px gold;
-    }
-    a:hover {
-      background: #333;
-      box-shadow: 0 0 20px #ffd700;
-    }
+    button:hover { background: #333; }
   </style>
 
 <style>
@@ -72,7 +53,17 @@ window.onload = function () {
 
 </head>
 <body>
-  <h1>Gizmo</h1>
-  <a href="gizmo/coin_flip.html">Coin Flip</a>
-  <a href="gizmo/randomizer.html">Randomizer</a>
-</body></html>
+  <h1>🃏 Card Force Trick</h1>
+  <p>Ask your spectator to pick a card... any card...</p>
+  <button onclick="revealCard()">Reveal</button>
+  <div class="card" id="card"></div>
+  <script>
+    function revealCard() {
+      // You can modify this to be dynamic in future
+      const forcedCard = "Seven of Hearts";
+      document.getElementById("card").innerText = "🎴 " + forcedCard;
+      new Audio("https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-reward-952.mp3").play();
+    }
+  </script>
+</body>
+</html>

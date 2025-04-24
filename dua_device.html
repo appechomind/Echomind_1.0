@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Settings Menu</title>
+  <title>Dua_Device Menu</title>
   <style>
     body {
       background: #0b0b0b;
@@ -72,33 +72,7 @@ window.onload = function () {
 
 </head>
 <body>
-  <h1>Settings</h1>
-  <a href="settings/language.html">Language</a>
-  <a href="settings/accessibility.html">Accessibility</a>
-
-  <h2 style="margin-top: 50px;">🌐 Language Selection</h2>
-  <select id="language" onchange="changeLang(this.value)">
-    <option value="auto">🌍 Auto (Device Language)</option>
-    <option value="en-US">🇺🇸 English</option>
-    <option value="fil-PH">🇵🇭 Filipino</option>
-    <option value="fi-FI">🇫🇮 Finnish</option>
-    <option value="es-ES">🇪🇸 Spanish</option>
-    <option value="ja-JP">🇯🇵 Japanese</option>
-    <option value="vi-VN">🇻🇳 Vietnamese</option>
-  </select>
-
-  <p style="margin-top:20px;">Current Language: <span id="currentLang"></span></p>
-
-  <script>
-    const browserLang = navigator.language || navigator.userLanguage;
-    let savedLang = localStorage.getItem("echomind_lang") || "auto";
-    let currentLang = (savedLang === "auto") ? browserLang : savedLang;
-    document.getElementById("language").value = savedLang;
-    document.getElementById("currentLang").textContent = currentLang;
-    function changeLang(code) {{
-      localStorage.setItem("echomind_lang", code);
-      location.reload();
-    }}
-  </script>
-
+  <h1>Dua Device</h1>
+  <a href="dua_device/torch_test.html">Torch Test</a>
+  <a href="dua_device/color_pulse.html">Color Pulse</a>
 </body></html>
