@@ -1,0 +1,23 @@
+<html><head></head><body>
+<script>
+  // F1 key trigger for admin
+  document.addEventListener('keydown', e => {
+    if (e.key === 'F1') {
+      e.preventDefault();
+      window.location.href = 'admin.html';
+    }
+  });
+
+  // Swipe down gesture for admin panel
+  let touchStartY = null;
+  document.addEventListener('touchstart', e => {
+    touchStartY = e.touches[0].clientY;
+  });
+  document.addEventListener('touchend', e => {
+    const endY = e.changedTouches[0].clientY;
+    if (touchStartY !== null && endY - touchStartY > 200) {
+      window.location.href = 'admin.html';
+    }
+  });
+</script>
+</body></html>

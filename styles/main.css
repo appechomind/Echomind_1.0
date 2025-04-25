@@ -1,0 +1,133 @@
+/* EchoMind Core Styles */
+
+:root {
+  --gold: #ffd700;
+  --gold-glow: #ffe066;
+  --bg-dark: #0b0b0b;
+  --bg-light: #222;
+  --text-light: #fff;
+  --text-muted: #ccc;
+  --border-radius: 8px;
+  --transition-speed: 0.3s;
+}
+
+/* Base Styles */
+body {
+  background: var(--bg-dark);
+  color: var(--text-light);
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--gold);
+  text-shadow: 0 0 10px var(--gold);
+  margin-bottom: 1em;
+}
+
+/* Links */
+a {
+  color: var(--gold);
+  text-decoration: none;
+  transition: all var(--transition-speed) ease;
+}
+
+a:hover {
+  text-shadow: 0 0 10px var(--gold);
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background: var(--bg-light);
+  color: var(--text-light);
+  border: 2px solid var(--gold);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all var(--transition-speed) ease;
+}
+
+.btn:hover {
+  background: var(--bg-dark);
+  box-shadow: 0 0 15px var(--gold-glow);
+  transform: translateY(-2px);
+}
+
+/* Cards */
+.card {
+  background: var(--bg-light);
+  border: 1px solid var(--gold);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  margin: 10px;
+  transition: all var(--transition-speed) ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+}
+
+/* Back Button */
+.back-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  color: var(--gold);
+  font-size: 1.2em;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.back-btn:hover {
+  transform: translateX(-5px);
+}
+
+/* Utilities */
+.text-center { text-align: center; }
+.text-muted { color: var(--text-muted); }
+.mt-1 { margin-top: 1rem; }
+.mt-2 { margin-top: 2rem; }
+.mb-1 { margin-bottom: 1rem; }
+.mb-2 { margin-bottom: 2rem; }
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn var(--transition-speed) ease-in;
+}
+
+.slide-in {
+  animation: slideIn var(--transition-speed) ease-out;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .back-btn {
+    position: static;
+    margin: 20px;
+  }
+  
+  .card {
+    margin: 10px 0;
+  }
+  
+  h1 { font-size: 1.8em; }
+  h2 { font-size: 1.5em; }
+} 

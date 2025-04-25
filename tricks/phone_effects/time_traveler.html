@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>⏰ Time Traveler - EchoMind</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --gold-glow: #ffe066;
+            --bg-dark: #0b0b0b;
+            --card-bg: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            margin-top: 50px;
+            padding: 0 20px;
+        }
+
+        h1 {
+            color: gold;
+            text-shadow: 0 0 10px gold;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: gold;
+            text-decoration: none;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .back-btn:hover {
+            text-shadow: 0 0 10px gold;
+        }
+
+        .section {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .section h2 {
+            color: gold;
+            margin-top: 0;
+            font-size: 1.4em;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .section p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .steps {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .steps li {
+            margin-bottom: 12px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .steps li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: gold;
+        }
+
+        .tip {
+            background: rgba(255, 215, 0, 0.1);
+            border-left: 3px solid gold;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 5px 5px 0;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="../phone_effects.html" class="back-btn">← Back</a>
+    
+    <div class="container">
+        <h1>⏰ Time Traveler</h1>
+        
+        <div class="section">
+            <h2>Effect</h2>
+            <p>In this mysterious demonstration of precognition, you'll predict the exact time a spectator will check their phone - down to the minute and second. What makes this truly remarkable is that the spectator has complete control over when they check their phone, yet you'll have written down the precise time before they even set their timer!</p>
+        </div>
+
+        <div class="section">
+            <h2>Performance</h2>
+            <ol class="steps">
+                <li>Write down your prediction and seal it in an envelope</li>
+                <li>Hand your spectator your phone and ask them to set a random timer</li>
+                <li>They can choose any duration between 1 and 60 minutes</li>
+                <li>When the timer goes off, they check the exact time on their own phone</li>
+                <li>Open the envelope to reveal you predicted the exact time they would check</li>
+                <li>The prediction matches perfectly - hour, minute, and second!</li>
+            </ol>
+        </div>
+
+        <div class="section">
+            <h2>Tips</h2>
+            <div class="tip">
+                <p>⏰ <strong>Natural flow:</strong> Make the timer setting feel casual and unimportant - don't draw attention to it.</p>
+                <p>⏰ <strong>Build anticipation:</strong> While waiting for the timer, engage in conversation about time, predictions, and how we perceive time differently in various situations.</p>
+                <p>⏰ <strong>The reveal:</strong> Have them read your prediction aloud first, then check their phone. This creates a stronger moment of astonishment.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

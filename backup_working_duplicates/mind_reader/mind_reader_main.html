@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🔮 EchoMind - Mind Reader</title>
+  <script src="../../scripts/mic_handler.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --gold-glow: #ffe066;
+      --bg-dark: #0b0b0b;
+    }
+
+    body {
+      background: var(--bg-dark);
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      text-align: center;
+    }
+
+    .back-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      color: white;
+      text-decoration: none;
+      font-size: 1.5em;
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.5);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid gold;
+      transition: all 0.3s ease;
+    }
+
+    .back-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 15px var(--gold-glow);
+    }
+
+    h1 {
+      color: gold;
+      text-shadow: 0 0 10px gold;
+      margin: 40px 0;
+      font-size: 2.5em;
+      animation: titleGlow 3s infinite alternate;
+    }
+
+    #cardArea {
+      perspective: 1000px;
+      width: 240px;
+      height: 336px;
+      margin: 40px auto;
+      position: relative;
+      transition: opacity 0.3s ease;
+    }
+
+    #cardReveal {
+      width: 100%;
+      height: 100%;
+      background: white;
+      border-radius: 12px;
+      border: 3px solid gold;
+      box-shadow: 0 0 20px var(--gold-glow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      font-weight: bold;
+      color: #222;
+      text-transform: uppercase;
+      padding: 10px;
+      transform-style: preserve-3d;
+      transition: transform 0.6s;
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    #cardReveal.flipped {
+      transform: rotateY(180deg);
+    }
+
+    #cardReveal.waiting {
+      background-image: url('images/red_joker.png');
+      opacity: 0.5;
+    }
+
+    #log {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #ccc;
+      white-space: pre-line;
+      max-width: 95%;
+      margin: 20px auto;
+      text-align: left;
+      background: rgba(0, 0, 0, 0.3);
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 215, 0, 0.2);
+      transition: opacity 0.3s ease;
+    }
+
+    .control-button {
+      margin: 10px;
+      padding: 8px 20px;
+      font-size: 16px;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: 1px solid gold;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .control-button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px var(--gold-glow);
+    }
+
+    .hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #debugPanel {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid gold;
+      text-align: left;
+      font-size: 12px;
+      max-width: 300px;
+      z-index: 100;
+      transition: transform 0.3s ease;
+      transform: translateX(120%);
+    }
+
+    #debugPanel.visible {
+      transform: translateX(0);
+    }
+
+    #debugPanel h3 {
+      margin: 0 0 10px 0;
+      color: gold;
+    }
+
+    .language-select {
+      margin: 10px;
+      padding: 5px;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: 1px solid gold;
+      border-radius: 4px;
+    }
+
+    #controls {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 10px;
+    }
+
+    @keyframes titleGlow {
+      0% { text-shadow: 0 0 10px gold; }
+      100% { text-shadow: 0 0 20px gold, 0 0 40px var(--gold-glow); }
+    }
+
+    #fractalBg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      opacity: 0.5;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2em;
+      }
+      
+      #cardArea {
+        width: 200px;
+        height: 280px;
+      }
+
+      #debugPanel {
+        max-width: 80vw;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="../mentalism.html" class="back-button">←</a>
+  <div id="controls">
+    <select class="language-select" onchange="changeLanguage(this.value)">
+      <option value="en-US">English</option>
+      <option value="es-ES">Español</option>
+      <option value="fr-FR">Français</option>
+      <option value="de-DE">Deutsch</option>
+    </select>
+    <button onclick="toggleDebug()" class="control-button">🛠️</button>
+    <button onclick="toggleInterface()" class="control-button">👁️</button>
+  </div>
+
+  <h1>🧠 Mind Reader</h1>
+  <p id="instructions">Say a card like "seven of clubs" or "jack of hearts"</p>
+
+  <div id="cardArea">
+    <div id="cardReveal"></div>
+  </div>
+
+  <div id="log">🎤 Listening...</div>
+  <button onclick="toggleListening()" class="control-button">🎙️ Toggle Mic</button>
+  <label style="margin-top:10px;">
+    <input type="checkbox" id="keepListening" checked onchange="updateListening()" />
+    ♻️ Keep Listening
+  </label>
+
+  <div id="debugPanel">
+    <h3>Debug Panel</h3>
+    <div id="debugLog"></div>
+  </div>
+
+  <script>
+    const ranks = [
+      ["ace", "Ace"], ["2", "Two"], ["3", "Three"], ["4", "Four"], ["5", "Five"],
+      ["6", "Six"], ["7", "Seven"], ["8", "Eight"], ["9", "Nine"], ["10", "Ten"],
+      ["jack", "Jack"], ["queen", "Queen"], ["king", "King"]
+    ];
+    const suits = ["hearts", "diamonds", "clubs", "spades"];
+
+    // Language support
+    const translations = {
+      'en-US': {
+        instructions: 'Say a card like "seven of clubs" or "jack of hearts"',
+        listening: '🎤 Listening...',
+        revealed: '🎉 Revealed: ',
+        micRestarted: '🔁 Mic restarted.',
+        micError: '❌ Mic error: ',
+        micStopped: '⛔ Mic stopped. Tap restart if needed.',
+        micStarted: '🎧 Mic started.',
+        allowMic: '🎤 Please allow microphone access and restart.'
+      },
+      'es-ES': {
+        instructions: 'Di una carta como "siete de tréboles" o "jota de corazones"',
+        listening: '🎤 Escuchando...',
+        revealed: '🎉 Revelado: ',
+        micRestarted: '🔁 Micrófono reiniciado.',
+        micError: '❌ Error de micrófono: ',
+        micStopped: '⛔ Micrófono detenido. Toca reiniciar si es necesario.',
+        micStarted: '🎧 Micrófono iniciado.',
+        allowMic: '🎤 Por favor permite el acceso al micrófono y reinicia.'
+      }
+    };
+
+    let currentLang = localStorage.getItem("echomind_lang") || 'en-US';
+    let interfaceHidden = false;
+    let lastTapTime = 0;
+    let tapCount = 0;
+    
+    const cardReveal = document.getElementById("cardReveal");
+    const log = document.getElementById("log");
+    const debugPanel = document.getElementById("debugPanel");
+    const debugLog = document.getElementById("debugLog");
+    const instructions = document.getElementById("instructions");
+
+    // Build card recognition map with translations
+    const cardMap = {};
+    for (const suit of suits) {
+      for (const [rk, rn] of ranks) {
+        const full = rn + " of " + suit.charAt(0).toUpperCase() + suit.slice(1);
+        const keys = [
+          `${rk} of ${suit}`,
+          `${rk} ${suit}`,
+          `${rn.toLowerCase()} ${suit}`,
+          `${rn.toLowerCase()} of ${suit}`
+        ];
+        for (const k of keys) {
+          cardMap[k] = full;
+        }
+      }
+    }
+
+    function debug(message) {
+      const timestamp = new Date().toLocaleTimeString();
+      debugLog.innerHTML = `${timestamp}: ${message}<br>${debugLog.innerHTML}`;
+      console.log(`[DEBUG] ${message}`);
+    }
+
+    function toggleDebug() {
+      debugPanel.classList.toggle('visible');
+    }
+
+    function toggleInterface() {
+      interfaceHidden = !interfaceHidden;
+      document.querySelectorAll('#cardArea, #log, h1, p').forEach(el => {
+        el.classList.toggle('hidden', interfaceHidden);
+      });
+    }
+
+    function changeLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem("echomind_lang", lang);
+      window.micHandler.recognition.lang = lang;
+      instructions.textContent = translations[lang]?.instructions || translations['en-US'].instructions;
+      debug(`Language changed to ${lang}`);
+    }
+
+    function revealCard(cardText) {
+      const cardName = cardText.toLowerCase().replace(/ /g, '_') + '.png';
+      cardReveal.classList.add('flipped');
+      
+      setTimeout(() => {
+        cardReveal.style.backgroundImage = `url('../../images/${cardName}')`;
+        cardReveal.textContent = '';
+        cardReveal.classList.remove('flipped');
+      }, 300);
+      
+      localStorage.setItem("peek_message", cardText);
+      const revealed = translations[currentLang]?.revealed || translations['en-US'].revealed;
+      log.innerText += `\n${revealed}${cardText}`;
+      debug(`Card revealed: ${cardText}`);
+
+      // Save to reveal history
+      const history = JSON.parse(localStorage.getItem('revealHistory') || '[]');
+      history.unshift({ card: cardText, timestamp: new Date().toISOString() });
+      localStorage.setItem('revealHistory', JSON.stringify(history.slice(0, 50)));
+    }
+
+    function toggleListening() {
+      if (window.micHandler.listening) {
+        window.micHandler.stop();
+      } else {
+        window.micHandler.start(document.getElementById("keepListening").checked);
+      }
+    }
+
+    function updateListening() {
+      const keepListening = document.getElementById("keepListening").checked;
+      if (window.micHandler.listening) {
+        window.micHandler.start(keepListening);
+      }
+    }
+
+    // Set up callbacks for the microphone handler
+    window.micHandler.setCallbacks({
+      onStart: () => {
+        log.innerText += "\n🎤 Listening...";
+        debug('Microphone started');
+      },
+      onEnd: () => {
+        if (!window.micHandler.keepListening) {
+          log.innerText += "\n⏹️ Microphone stopped";
+          debug('Microphone stopped');
+        }
+      },
+      onResult: (transcript) => {
+        debug(`Speech recognized: ${transcript}`);
+        log.innerText += "\n🗣 " + transcript;
+
+        const normalized = transcript.replace(/[^a-z0-9 ]+/g, "").toLowerCase();
+        for (const spoken in cardMap) {
+          if (normalized.includes(spoken)) {
+            revealCard(cardMap[spoken]);
+            break;
+          }
+        }
+      },
+      onError: (event) => {
+        const error = translations[currentLang]?.micError || translations['en-US'].micError;
+        log.innerText += `\n${error}${event.error}`;
+        if (event.error === 'not-allowed') {
+          const allow = translations[currentLang]?.allowMic || translations['en-US'].allowMic;
+          log.innerText += `\n${allow}`;
+        }
+        debug(`Mic error: ${event.error}`);
+      }
+    });
+
+    // Start listening if permission was already granted
+    if (window.micHandler.hasPermission && document.getElementById("keepListening").checked) {
+      window.micHandler.start(true);
+    }
+
+    // Triple tap detection for reset
+    document.addEventListener('click', (e) => {
+      const now = Date.now();
+      if (now - lastTapTime > 500) {
+        tapCount = 1;
+      } else {
+        tapCount++;
+        if (tapCount === 3) {
+          toggleInterface();
+          debug('Triple tap detected - toggling interface');
+          tapCount = 0;
+        }
+      }
+      lastTapTime = now;
+    });
+
+    // Fractal Background Animation
+    window.onload = function() {
+      cardReveal.classList.add('waiting');
+      cardReveal.textContent = '';
+
+      const canvas = document.createElement('canvas');
+      canvas.id = 'fractalBg';
+      document.body.appendChild(canvas);
+      const ctx = canvas.getContext('2d');
+      
+      function resizeCanvas() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      }
+      
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      let t = 0;
+      function drawFractal() {
+        let w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+        
+        for (let i = 0; i < 200; i++) {
+          let x = w/2 + Math.sin(i * 0.1 + t) * i * 0.8;
+          let y = h/2 + Math.cos(i * 0.1 + t) * i * 0.8;
+          
+          ctx.fillStyle = `hsla(${(t * 50 + i * 2) % 360}, 100%, ${30 + i % 50}%, 0.5)`;
+          ctx.beginPath();
+          ctx.arc(x, y, 2 + (i % 3), 0, Math.PI * 2);
+          ctx.fill();
+        }
+        
+        t += 0.01;
+        requestAnimationFrame(drawFractal);
+      }
+      
+      drawFractal();
+      debug('Application initialized');
+    };
+  </script>
+</body>
+</html> 

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>📞 Mystic Call - EchoMind</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --gold-glow: #ffe066;
+            --bg-dark: #0b0b0b;
+            --card-bg: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            margin-top: 50px;
+            padding: 0 20px;
+        }
+
+        h1 {
+            color: gold;
+            text-shadow: 0 0 10px gold;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: gold;
+            text-decoration: none;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .back-btn:hover {
+            text-shadow: 0 0 10px gold;
+        }
+
+        .section {
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        .section h2 {
+            color: gold;
+            margin-top: 0;
+            font-size: 1.4em;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .section p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .steps {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .steps li {
+            margin-bottom: 12px;
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .steps li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: gold;
+        }
+
+        .tip {
+            background: rgba(255, 215, 0, 0.1);
+            border-left: 3px solid gold;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 5px 5px 0;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="../phone_effects.html" class="back-btn">← Back</a>
+    
+    <div class="container">
+        <h1>📞 Mystic Call</h1>
+        
+        <div class="section">
+            <h2>Effect</h2>
+            <p>In this mind-bending demonstration of telepathic connection, a complete stranger reveals your spectator's innermost thoughts through a random phone call. The spectator thinks of anything - a memory, a dream, a wish - and dials a number they create on the spot. Incredibly, the person who answers knows exactly what they're thinking!</p>
+        </div>
+
+        <div class="section">
+            <h2>Performance</h2>
+            <ol class="steps">
+                <li>Ask your spectator to think of something meaningful to them</li>
+                <li>Have them create a random phone number by rolling dice</li>
+                <li>They dial the number on their own phone</li>
+                <li>When someone answers, they experience an impossible moment</li>
+                <li>The stranger on the line describes their exact thought</li>
+                <li>End the call and let the mystery linger</li>
+            </ol>
+        </div>
+
+        <div class="section">
+            <h2>Tips</h2>
+            <div class="tip">
+                <p>📞 <strong>Setting the mood:</strong> Create an atmosphere of mystery before they even dial the number.</p>
+                <p>📞 <strong>The thought:</strong> Guide them to think of something specific but meaningful - a cherished memory works well.</p>
+                <p>📞 <strong>The aftermath:</strong> Don't over-explain what happened. Let them wonder about the mysterious connection they just experienced.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

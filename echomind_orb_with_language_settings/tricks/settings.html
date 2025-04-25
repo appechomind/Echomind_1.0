@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>EchoMind Settings</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: #0b0b0b;
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      text-align: center;
+      padding-top: 100px;
+    }
+    h1 {
+      font-size: 2em;
+      color: #ffe066;
+      text-shadow: 0 0 10px gold;
+    }
+    select, option {
+      font-size: 18px;
+      padding: 10px;
+      margin-top: 20px;
+      background: #1a1a3d;
+      color: white;
+      border: 2px solid gold;
+      border-radius: 8px;
+    }
+    p {
+      margin-top: 40px;
+      font-size: 16px;
+      color: #aaa;
+    }
+  </style>
+
+<style>
+canvas#fractalBg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+}
+</style>
+<script>
+window.onload = function () {
+  const canvas = document.createElement("canvas");
+  canvas.id = "fractalBg";
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  let t = 0;
+  function drawFractal() {
+    let w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    for (let i = 0; i < 200; i++) {
+      let x = w / 2 + Math.sin(i * 0.1 + t) * i * 0.8;
+      let y = h / 2 + 90 + Math.cos(i * 0.1 + t) * i * 0.8;
+      ctx.fillStyle = `hsl(${(t * 50 + i * 2) % 360}, 100%, ${30 + i % 50}%)`;
+      ctx.beginPath();
+      ctx.arc(x, y, 2 + (i % 3), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    t += 0.01;
+    requestAnimationFrame(drawFractal);
+  }
+  drawFractal();
+};
+</script>
+
+</head>
+<body>
+  <h1>🌐 Language Settings</h1>
+  <p>EchoMind will use your device language by default.</p>
+
+  <label for="language">Change Language:</label>
+  <br>
+  <select id="language" onchange="changeLang(this.value)">
+    <option value="auto">🌍 Auto (use device language)</option>
+    <option value="en-US">🇺🇸 English</option>
+    <option value="fil-PH">🇵🇭 Filipino</option>
+    <option value="fi-FI">🇫🇮 Finnish</option>
+    <option value="es-ES">🇪🇸 Spanish</option>
+    <option value="fr-FR">🇫🇷 French</option>
+    <option value="de-DE">🇩🇪 German</option>
+    <option value="ja-JP">🇯🇵 Japanese</option>
+  </select>
+
+  <p>Current language: <span id="currentLang"></span></p>
+
+  <script>
+    const browserLang = navigator.language || navigator.userLanguage;
+    let savedLang = localStorage.getItem("echomind_lang") || "auto";
+    let currentLang = (savedLang === "auto") ? browserLang : savedLang;
+
+    document.getElementById("language").value = savedLang;
+    document.getElementById("currentLang").textContent = currentLang;
+
+    function changeLang(code) {
+      localStorage.setItem("echomind_lang", code);
+      location.reload();
+    }
+  </script>
+</body>
+</html>
