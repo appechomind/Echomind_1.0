@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>🔮 Mind Peek - EchoMind</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --gold-glow: #ffe066;
+            --bg-dark: #0b0b0b;
+            --search-bg: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        h1 {
+            color: gold;
+            text-shadow: 0 0 10px gold;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+        }
+
+        .search-box {
+            background: var(--search-bg);
+            border: 2px solid gold;
+            border-radius: 25px;
+            padding: 15px 25px;
+            width: 80%;
+            max-width: 600px;
+            color: white;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            box-shadow: 0 0 20px var(--gold-glow);
+        }
+
+        .prediction-box {
+            background: rgba(0, 0, 0, 0.5);
+            border: 2px solid gold;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .prediction-box.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .instructions {
+            color: #aaa;
+            margin: 20px 0;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .reveal-btn {
+            background: linear-gradient(45deg, #ffd700, #ffa500);
+            border: none;
+            border-radius: 25px;
+            color: black;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            opacity: 0;
+        }
+
+        .reveal-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px var(--gold-glow);
+        }
+
+        .reveal-btn.visible {
+            opacity: 1;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: gold;
+            text-decoration: none;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .back-btn:hover {
+            text-shadow: 0 0 10px gold;
+        }
+
+        @media (max-width: 600px) {
+            .search-box {
+                width: 90%;
+                font-size: 1em;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="../index.html" class="back-btn">← Back</a>
+    
+    <div class="container">
+        <h1>🔮 Mind Peek</h1>
+        
+        <div class="instructions">
+            Think of something meaningful to you - a memory, a wish, or a secret.<br>
+            Type it below, but don't press Enter. Just think about it deeply.
+        </div>
+
+        <input type="text" class="search-box" id="searchBox" placeholder="Type your thought here..." autocomplete="off">
+        
+        <div class="instructions">
+            When you're ready, close your eyes and visualize your thought clearly.<br>
+            Take three deep breaths while focusing on it.
+        </div>
+
+        <button class="reveal-btn" id="revealBtn">Reveal My Thoughts</button>
+
+        <div class="prediction-box" id="predictionBox">
+            <p>I sense that you're thinking about...</p>
+            <h2 id="prediction"></h2>
+        </div>
+    </div>
+
+    <script>
+        const searchBox = document.getElementById('searchBox');
+        const revealBtn = document.getElementById('revealBtn');
+        const predictionBox = document.getElementById('predictionBox');
+        const prediction = document.getElementById('prediction');
+        let userInput = '';
+
+        searchBox.addEventListener('input', (e) => {
+            userInput = e.target.value;
+            if (userInput.length > 0) {
+                revealBtn.classList.add('visible');
+            } else {
+                revealBtn.classList.remove('visible');
+            }
+        });
+
+        // Prevent form submission
+        searchBox.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+            }
+        });
+
+        revealBtn.addEventListener('click', () => {
+            // Dramatic reveal effect
+            searchBox.style.opacity = '0.5';
+            searchBox.disabled = true;
+            revealBtn.style.opacity = '0.5';
+            revealBtn.disabled = true;
+
+            // Add dramatic pause
+            setTimeout(() => {
+                prediction.textContent = userInput;
+                predictionBox.classList.add('visible');
+                
+                // Add mystical typing effect
+                const text = prediction.textContent;
+                prediction.textContent = '';
+                let i = 0;
+                const typeEffect = setInterval(() => {
+                    if (i < text.length) {
+                        prediction.textContent += text.charAt(i);
+                        i++;
+                    } else {
+                        clearInterval(typeEffect);
+                    }
+                }, 50);
+            }, 2000);
+        });
+
+        // Clear everything when clicking back to try again
+        document.querySelector('.back-btn').addEventListener('click', () => {
+            searchBox.value = '';
+            searchBox.style.opacity = '1';
+            searchBox.disabled = false;
+            revealBtn.style.opacity = '1';
+            revealBtn.disabled = false;
+            revealBtn.classList.remove('visible');
+            predictionBox.classList.remove('visible');
+        });
+    </script>
+</body>
+</html> 

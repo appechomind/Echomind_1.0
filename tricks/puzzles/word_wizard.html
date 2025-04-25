@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EchoMind - Word Wizard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../styles/template.css">
+  <style>
+    /* Add specific styles for Word Wizard */
+  </style>
+</head>
+<body>
+  <div class="loading">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <a href="../puzzles.html" class="back-button">←</a>
+  <h1>Word Wizard</h1>
+  
+  <div class="content">
+    <div id="trick-content">
+      <p>Coming soon! This puzzle is under development.</p>
+    </div>
+    <div class="controls">
+      <button class="button" onclick="showHelp()">Help</button>
+    </div>
+  </div>
+
+  <div class="help-overlay">
+    <div class="help-content">
+      <button class="close-help" onclick="hideHelp()">×</button>
+      <h2>Word Wizard</h2>
+      <div id="help-text">
+        <p>Put your vocabulary and word unscrambling skills to the test with magical phrases.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="status-message" class="status-message"></div>
+
+  <script src="../scripts/fractal.js"></script>
+  <script src="../scripts/audio.js"></script>
+  <script src="../scripts/utils.js"></script>
+  <script>
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        EchoMind.animate.fadeOut(document.querySelector('.loading'));
+      }, 500);
+    });
+  </script>
+</body>
+</html> 

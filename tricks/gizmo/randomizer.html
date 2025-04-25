@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>🎲 Randomizer - EchoMind</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --gold-glow: #ffe066;
+            --bg-dark: #0b0b0b;
+            --card-bg: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background: var(--bg-dark);
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+            margin-top: 50px;
+            padding: 0 20px;
+        }
+
+        h1 {
+            color: gold;
+            text-shadow: 0 0 10px gold;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: gold;
+            text-decoration: none;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .back-btn:hover {
+            text-shadow: 0 0 10px gold;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .tool-card {
+            background: var(--card-bg);
+            border: 1px solid gold;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+        }
+
+        .tool-title {
+            color: gold;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+
+        .input-group {
+            margin: 15px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="number"] {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid gold;
+            border-radius: 5px;
+            color: white;
+            padding: 8px;
+            width: 100px;
+            text-align: center;
+        }
+
+        .button {
+            background: transparent;
+            border: 2px solid gold;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+        }
+
+        .button:hover {
+            background: rgba(255, 215, 0, 0.1);
+            box-shadow: 0 0 15px var(--gold-glow);
+        }
+
+        .result {
+            margin-top: 15px;
+            min-height: 1.5em;
+            color: gold;
+            font-size: 1.2em;
+        }
+
+        .card-display {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .card {
+            background: white;
+            color: black;
+            width: 40px;
+            height: 60px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .card.red {
+            color: red;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="../gizmo.html" class="back-btn">← Back</a>
+    
+    <div class="container">
+        <h1>🎲 Randomizer</h1>
+        
+        <div class="tools-grid">
+            <!-- Dice Roll -->
+            <div class="tool-card">
+                <div class="tool-title">🎲 Dice Roll</div>
+                <div class="input-group">
+                    <label>Number of dice:</label>
+                    <input type="number" id="diceCount" value="1" min="1" max="10">
+                    <label>Sides per die:</label>
+                    <input type="number" id="diceSides" value="6" min="2" max="100">
+                </div>
+                <button class="button" onclick="rollDice()">Roll</button>
+                <div class="result" id="diceResult"></div>
+            </div>
+
+            <!-- Number Generator -->
+            <div class="tool-card">
+                <div class="tool-title">🔢 Number Generator</div>
+                <div class="input-group">
+                    <label>Min:</label>
+                    <input type="number" id="numMin" value="1">
+                    <label>Max:</label>
+                    <input type="number" id="numMax" value="100">
+                </div>
+                <button class="button" onclick="generateNumber()">Generate</button>
+                <div class="result" id="numberResult"></div>
+            </div>
+
+            <!-- Card Draw -->
+            <div class="tool-card">
+                <div class="tool-title">♠️ Card Draw</div>
+                <div class="input-group">
+                    <label>Number of cards:</label>
+                    <input type="number" id="cardCount" value="1" min="1" max="52">
+                </div>
+                <button class="button" onclick="drawCards()">Draw</button>
+                <div class="card-display" id="cardResult"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="gizmo.js"></script>
+    <script>
+        const gizmo = new Gizmo();
+
+        // Dice Roll
+        function rollDice() {
+            const count = parseInt(document.getElementById('diceCount').value);
+            const sides = parseInt(document.getElementById('diceSides').value);
+            const results = [];
+            
+            for (let i = 0; i < count; i++) {
+                results.push(gizmo.getRandomNumber(1, sides));
+            }
+            
+            const total = results.reduce((a, b) => a + b, 0);
+            document.getElementById('diceResult').textContent = 
+                `Rolls: [${results.join(', ')}] Total: ${total}`;
+            
+            gizmo.playSound('success');
+        }
+
+        // Number Generator
+        function generateNumber() {
+            const min = parseInt(document.getElementById('numMin').value);
+            const max = parseInt(document.getElementById('numMax').value);
+            
+            if (min > max) {
+                document.getElementById('numberResult').textContent = 'Min must be less than max';
+                gizmo.playSound('error');
+                return;
+            }
+            
+            const result = gizmo.getRandomNumber(min, max);
+            document.getElementById('numberResult').textContent = result;
+            gizmo.playSound('success');
+        }
+
+        // Card Draw
+        function drawCards() {
+            const count = parseInt(document.getElementById('cardCount').value);
+            const suits = ['♠', '♥', '♦', '♣'];
+            const values = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+            
+            // Create deck
+            const deck = [];
+            for (let suit of suits) {
+                for (let value of values) {
+                    deck.push({ suit, value });
+                }
+            }
+            
+            // Shuffle and draw
+            gizmo.shuffle(deck);
+            const drawn = deck.slice(0, count);
+            
+            // Display cards
+            const container = document.getElementById('cardResult');
+            container.innerHTML = '';
+            
+            drawn.forEach(card => {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'card';
+                if (card.suit === '♥' || card.suit === '♦') {
+                    cardDiv.className += ' red';
+                }
+                cardDiv.textContent = `${card.value}${card.suit}`;
+                container.appendChild(cardDiv);
+            });
+            
+            gizmo.playSound('success');
+        }
+
+        // Input validation
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('change', () => {
+                const val = parseInt(input.value);
+                const min = parseInt(input.min);
+                const max = parseInt(input.max);
+                
+                if (val < min) input.value = min;
+                if (val > max) input.value = max;
+            });
+        });
+    </script>
+</body>
+</html> 
