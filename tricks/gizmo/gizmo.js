@@ -313,9 +313,9 @@ class Gizmo {
             try {
                 this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
                 await Promise.all([
-                    this.loadSound('coin', '../assets/sounds/coin.mp3'),
-                    this.loadSound('success', '../assets/sounds/success.mp3'),
-                    this.loadSound('error', '../assets/sounds/error.mp3')
+                    this.loadSound('coin', '../../assets/sounds/coin.mp3'),
+                    this.loadSound('success', '../../assets/sounds/success.mp3'),
+                    this.loadSound('error', '../../assets/sounds/error.mp3')
                 ]);
             } catch (error) {
                 this.handleError(error, 'Audio initialization');

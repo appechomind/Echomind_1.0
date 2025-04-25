@@ -1,1 +1,137 @@
- 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EchoMind - Magical Assistant</title>
+    <meta name="description" content="A magical assistant for mentalists and magicians">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#FFD700">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/images/icon-192.png">
+    <link rel="apple-touch-icon" href="/assets/images/icon-192.png">
+    <link rel="stylesheet" href="/styles/navigation.css">
+    <style>
+        :root {
+            --primary-color: #FFD700;
+            --secondary-color: #4A4A4A;
+            --background-color: #1A1A1A;
+            --text-color: #FFFFFF;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .card {
+            background: linear-gradient(145deg, #2a2a2a, #1a1a1a);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card h2 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+        
+        .card p {
+            margin-bottom: 0;
+            line-height: 1.6;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-container">
+        <div class="logo">EchoMind</div>
+        <div class="menu-items">
+            <a href="#" class="nav-item active">Home</a>
+            <a href="/tricks/gizmo/coin_flip.html" class="nav-item">Gizmo</a>
+            <a href="/tricks/mentalism/mind_reader.html" class="nav-item">Mind Reader</a>
+            <a href="/tricks/phone_effects.html" class="nav-item">Phone FX</a>
+        </div>
+        <button class="mobile-toggle">☰</button>
+    </nav>
+    
+    <div class="container">
+        <h1>Welcome to EchoMind</h1>
+        <div class="grid">
+            <div class="card" onclick="location.href='/tricks/gizmo/coin_flip.html'">
+                <h2>🎲 Gizmo</h2>
+                <p>Your digital assistant for magical tools and utilities. Features include coin flips, randomizers, and more.</p>
+            </div>
+            <div class="card" onclick="location.href='/tricks/mentalism/mind_reader.html'">
+                <h2>🔮 Mind Reader</h2>
+                <p>Experience the power of mentalism with our advanced mind reading demonstrations.</p>
+            </div>
+            <div class="card" onclick="location.href='/tricks/phone_effects.html'">
+                <h2>📱 Phone FX</h2>
+                <p>Discover amazing effects that use everyday smartphones in extraordinary ways.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Register Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+
+        // Mobile menu toggle
+        const mobileToggle = document.querySelector('.mobile-toggle');
+        const menuItems = document.querySelector('.menu-items');
+        
+        mobileToggle.addEventListener('click', () => {
+            menuItems.classList.toggle('active');
+        });
+
+        // Handle navigation active state
+        const navItems = document.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            if (item.getAttribute('href') === window.location.pathname) {
+                item.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html> 

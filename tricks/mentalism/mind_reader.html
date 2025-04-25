@@ -93,7 +93,7 @@
     }
 
     #cardReveal.waiting {
-      background-image: url('images/red_joker.png');
+      background-image: url('../../assets/images/red_joker.png');
       opacity: 0.5;
     }
 
@@ -206,6 +206,12 @@
       }
     }
   </style>
+
+    <link rel="stylesheet" href="/styles/navigation.css">
+    <script src="/scripts/navigation.js"></script>
+
+    <link rel="stylesheet" href="../../styles/navigation.css">
+    <script src="../../scripts/navigation.js"></script>
 </head>
 <body>
   <a href="../mentalism.html" class="back-button">←</a>
@@ -325,11 +331,11 @@
     }
 
     function revealCard(cardText) {
-      const cardName = cardText.toLowerCase().replace(/ /g, '_') + '.png';
+      const cardName = `../../assets/images/cards/${cardText.toLowerCase().replace(/ /g, '_')}.png`;
       cardReveal.classList.add('flipped');
       
       setTimeout(() => {
-        cardReveal.style.backgroundImage = `url('../../images/${cardName}')`;
+        cardReveal.style.backgroundImage = `url(${cardName})`;
         cardReveal.textContent = '';
         cardReveal.classList.remove('flipped');
       }, 300);

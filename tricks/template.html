@@ -2,12 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>EchoMind - TITLE</title>
+  <title>🎭 Template - EchoMind</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../styles/main.css">
+  <link rel="stylesheet" href="../styles/navigation.css">
+  <script src="../scripts/core.js"></script>
+  <script src="../scripts/navigation.js"></script>
   <style>
     :root {
+      --background: #000000;
+      --text-light: #ffffff;
       --gold: #ffd700;
-      --gold-glow: #ffe066;
+      --gold-glow: rgba(255, 215, 0, 0.5);
       --bg-dark: #0b0b0b;
       --text-color: #ffffff;
       --accent-color: #ff6b6b;
@@ -16,13 +22,11 @@
     }
 
     body {
+      background-color: var(--background);
+      color: var(--text-light);
+      font-family: 'Arial', sans-serif;
       margin: 0;
       padding: 20px;
-      background: var(--bg-dark);
-      overflow-x: hidden;
-      font-family: "Segoe UI", system-ui, sans-serif;
-      color: var(--text-color);
-      text-align: center;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -62,18 +66,9 @@
     }
 
     .content {
+      width: 100%;
       max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 10px;
-      backdrop-filter: blur(5px);
-      border: 1px solid rgba(255, 215, 0, 0.1);
-      transition: transform 0.3s ease;
-    }
-
-    .content:hover {
-      transform: translateY(-5px);
+      margin-top: 20px;
     }
 
     .button {
@@ -251,10 +246,12 @@
   </div>
 
   <a href="../index.html" class="back-button">←</a>
-  <h1>TITLE</h1>
+  <h1>Template Page</h1>
   <div class="content">
     <div id="trick-content">
       <!-- Content will be dynamically loaded here -->
+      <h2>Template Page</h2>
+      <p>Start building your page here...</p>
     </div>
     <div class="controls">
       <button class="button" onclick="showHelp()">Help</button>
@@ -278,6 +275,9 @@
   <script src="scripts/audio.js"></script>
   <script src="scripts/utils.js"></script>
   <script>
+    // Initialize EchoMind core
+    window.echoMind = new EchoMind();
+    
     // Show loading screen
     const loading = document.querySelector('.loading');
     

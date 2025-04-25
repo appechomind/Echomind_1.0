@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <!-- Enhanced gold gradient -->
+        <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+            <stop offset="50%" style="stop-color:#FDB931;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#DAA520;stop-opacity:1" />
+        </linearGradient>
+        
+        <!-- Outer glow -->
+        <filter id="outerGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+            <feFlood flood-color="#FFD700" flood-opacity="0.5" result="glowColor"/>
+            <feComposite in="glowColor" in2="coloredBlur" operator="in" result="softGlow"/>
+            <feMerge>
+                <feMergeNode in="softGlow"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+
+        <!-- Sparkle filter -->
+        <filter id="sparkle" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="1" result="blur"/>
+            <feSpecularLighting result="specOut" specularExponent="20" lighting-color="#FFFFFF">
+                <fePointLight x="100" y="100" z="50"/>
+            </feSpecularLighting>
+            <feComposite in="SourceGraphic" in2="specOut" operator="arithmetic" k1="0" k2="1" k3="1" k4="0"/>
+        </filter>
+    </defs>
+    
+    <!-- Background circle with enhanced gradient -->
+    <circle cx="256" cy="256" r="240" fill="url(#goldGradient)" filter="url(#outerGlow)"/>
+    
+    <!-- Decorative magical circle -->
+    <circle cx="256" cy="256" r="220" 
+            stroke="#FFE55B" 
+            stroke-width="2" 
+            fill="none" 
+            opacity="0.5"/>
+    
+    <!-- Stylized 'E' for EchoMind with better proportions -->
+    <path d="M186 156 Q326 156 326 156 M186 256 Q306 256 306 256 M186 356 Q326 356 326 356 M186 156 L186 356" 
+          stroke="#1A1A1A" 
+          stroke-width="40" 
+          stroke-linecap="round"
+          fill="none"/>
+    
+    <!-- Enhanced magical sparkles -->
+    <g filter="url(#sparkle)">
+        <circle cx="326" cy="156" r="8" fill="#FFFFFF"/>
+        <circle cx="306" cy="256" r="8" fill="#FFFFFF"/>
+        <circle cx="326" cy="356" r="8" fill="#FFFFFF"/>
+        <!-- Additional sparkles -->
+        <circle cx="166" cy="156" r="4" fill="#FFFFFF"/>
+        <circle cx="166" cy="356" r="4" fill="#FFFFFF"/>
+        <circle cx="346" cy="256" r="4" fill="#FFFFFF"/>
+    </g>
+    
+    <!-- Subtle magical runes -->
+    <g stroke="#FFE55B" stroke-width="1" opacity="0.3" fill="none">
+        <path d="M256 36 A220 220 0 0 1 476 256" />
+        <path d="M256 476 A220 220 0 0 1 36 256" />
+    </g>
+</svg> 
