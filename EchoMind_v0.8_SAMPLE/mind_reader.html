@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🔁 EchoMind - Auto-Restart Mic</title>
+  
+<style>
+  body {
+    background: #0b0b0b;
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    text-align: center;
+  }
+  h1 {
+    color: #ffe066;
+    text-shadow: 0 0 10px gold;
+  }
+  button {
+    font-size: 1.2em;
+    padding: 10px 20px;
+    margin: 15px;
+    background: #1a1a3d;
+    color: white;
+    border: 2px solid gold;
+    border-radius: 10px;
+  }
+  button:hover {
+    background: #333;
+  }
+  .controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #reveal {
+    margin-top: 30px;
+    font-size: 2em;
+    color: gold;
+    text-shadow: 0 0 10px gold;
+    max-width: 90vw;
+    word-wrap: break-word;
+  }
+</style>
+
+<div class="controls">
+  <button onclick="startListening()">🎙️ Start Listening</button>
+  <label style="margin-top:10px;">
+    <input type="checkbox" id="keepListening" />
+    ♻️ Keep Listening
+  </label>
+</div>
+<div id="reveal"></div>
+
+<script>
+let recognition;
+let listening = false;
+
+function startListening() {
+  if (listening) return;
+
+  let userLang = localStorage.getItem("echomind_lang") || "auto";
+  if (userLang === "auto") userLang = navigator.language;
+
+  recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  recognition.lang = userLang;
+  recognition.continuous = false;
+  recognition.interimResults = false;
+
+  recognition.onstart = () => {
+    listening = true;
+    document.getElementById("reveal").innerText = "🎙️ Listening...";
+  };
+  recognition.onend = () => {
+    listening = false;
+    if (document.getElementById("keepListening").checked) {
+      startListening();
+    } else {
+      document.getElementById("reveal").innerText += "\n(Mic stopped)";
+    }
+  };
+  recognition.onerror = (e) => {
+    console.error("Mic error:", e);
+    document.getElementById("reveal").innerText = "🎙️ Mic error: " + e.error;
+  };
+  recognition.onresult = (event) => {
+    const transcript = event.results[0][0].transcript;
+    const card = matchCard(transcript);
+    if (card) {
+      showCard(card);
+    } else {
+      document.getElementById("reveal").innerText = "❓ Did not understand. Try again.";
+    }
+  };
+
+  recognition.start();
+}
+
+function showCard(card) {
+  document.getElementById("reveal").innerText = "🎴 " + card;
+  new Audio("https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-reward-952.mp3").play();
+}
+</script>
+</html>

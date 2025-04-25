@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EchoMind - Routine Builder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: #000;
+      color: #0f0;
+      font-family: monospace;
+      padding: 2em;
+      text-align: center;
+    }
+    select, input, button {
+      padding: 0.6em;
+      margin: 0.5em;
+      font-family: monospace;
+      background: #111;
+      border: 2px solid #0f0;
+      color: #0f0;
+    }
+    .routine-steps {
+      margin-top: 2em;
+      text-align: left;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .step {
+      border-bottom: 1px dashed #0f0;
+      padding: 0.5em 0;
+    }
+    .button-start {
+      margin-top: 1em;
+      background: #0f0;
+      color: #000;
+      font-weight: bold;
+    }
+  </style>
+
+<style>
+canvas#fractalBg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+}
+</style>
+<script>
+window.onload = function () {
+  const canvas = document.createElement("canvas");
+  canvas.id = "fractalBg";
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  let t = 0;
+  function drawFractal() {
+    let w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    for (let i = 0; i < 200; i++) {
+      let x = w / 2 + Math.sin(i * 0.1 + t) * i * 0.8;
+      let y = h / 2 + 90 + Math.cos(i * 0.1 + t) * i * 0.8;
+      ctx.fillStyle = `hsl(${(t * 50 + i * 2) % 360}, 100%, ${30 + i % 50}%)`;
+      ctx.beginPath();
+      ctx.arc(x, y, 2 + (i % 3), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    t += 0.01;
+    requestAnimationFrame(drawFractal);
+  }
+  drawFractal();
+};
+</script>
+
+</head>
+<body>
+  <h1>🎬 EchoMind - Show Routine Builder</h1>
+
+  <label>Routine Name:</label>
+  <input type="text" id="routineName" value="My Routine"><br>
+
+  <select id="trickSelector">
+    <option value="tricks/mentalism/mind_reader.html">Mind Reader</option>
+    <option value="tricks/mentalism/ultimonte_presets.html">Ultimonte (Presets)</option>
+    <option value="tricks/mentalism/ultimonte_scripted.html">Ultimonte (Scripted)</option>
+    <option value="tricks/mentalism/card_force.html">Card Force</option>
+  </select>
+
+  <button onclick="addTrick()">➕ Add Trick</button>
+  <button onclick="saveRoutine()">💾 Save</button>
+  <button onclick="loadRoutine()">📂 Load</button>
+
+  <div class="routine-steps" id="routineSteps"></div>
+
+  <button class="button-start" onclick="startRoutine()">▶️ Start Routine</button>
+
+  <script>
+    let routine = [];
+
+    function addTrick() {
+      const selector = document.getElementById("trickSelector");
+      const name = selector.options[selector.selectedIndex].text;
+      const value = selector.value;
+
+      routine.push({ name: name, path: value });
+      updateRoutineDisplay();
+    }
+
+    function updateRoutineDisplay() {
+      const container = document.getElementById("routineSteps");
+      container.innerHTML = "";
+      routine.forEach((step, index) => {
+        const div = document.createElement("div");
+        div.className = "step";
+        div.innerText = `Step ${index + 1}: ${step.name}`;
+        container.appendChild(div);
+      });
+    }
+
+    function saveRoutine() {
+      const name = document.getElementById("routineName").value || "routine";
+      const data = JSON.stringify({ name: name, steps: routine });
+      localStorage.setItem("echomind_routine", data);
+      alert("✅ Routine Saved.");
+    }
+
+    function loadRoutine() {
+      const data = localStorage.getItem("echomind_routine");
+      if (!data) return alert("⚠️ No saved routine found.");
+      const parsed = JSON.parse(data);
+      document.getElementById("routineName").value = parsed.name;
+      routine = parsed.steps;
+      updateRoutineDisplay();
+      alert("📂 Routine Loaded.");
+    }
+
+    function startRoutine() {
+      if (!routine.length) return alert("⚠️ Add at least one trick.");
+      const step = routine[0];
+      window.location.href = `../${step.path}`;
+    }
+  </script>
+</body>
+</html>

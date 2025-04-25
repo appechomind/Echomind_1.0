@@ -1,0 +1,220 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>🔁 EchoMind - Auto-Restart Mic</title>
+  
+<style>
+  body {
+    background: #0b0b0b;
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    text-align: center;
+  }
+  h1 {
+    color: #ffe066;
+    text-shadow: 0 0 10px gold;
+  }
+  button {
+    font-size: 1.2em;
+    padding: 10px 20px;
+    margin: 15px;
+    background: #1a1a3d;
+    color: white;
+    border: 2px solid gold;
+    border-radius: 10px;
+  }
+  button:hover {
+    background: #333;
+  }
+  .controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  #reveal {
+    margin-top: 30px;
+    font-size: 2em;
+    color: gold;
+    text-shadow: 0 0 10px gold;
+    max-width: 90vw;
+    word-wrap: break-word;
+  }
+</style>
+
+<div class="controls">
+  <button onclick="startListening()">🎙️ Start Listening</button>
+  <label style="margin-top:10px;">
+    <input type="checkbox" id="keepListening" />
+    ♻️ Keep Listening
+  </label>
+</div>
+<div id="reveal"></div>
+
+
+
+<label style="margin-top:20px; display:block;">
+  <input type="checkbox" id="keepListening" /> ♻️ Keep Listening
+</label>
+<label style="margin-top:10px; display:block;">
+  <input type="checkbox" id="hideUI" /> 🕶️ Hide everything behind the reveal
+</label>
+
+
+
+<script>
+  const cardMap = {
+  "10 of clubs": "10_of_clubs.png",
+  "10 of diamonds": "10_of_diamonds.png",
+  "10 of hearts": "10_of_hearts.png",
+  "10 of spades": "10_of_spades.png",
+  "2 of clubs": "2_of_clubs.png",
+  "2 of diamonds": "2_of_diamonds.png",
+  "2 of hearts": "2_of_hearts.png",
+  "2 of spades": "2_of_spades.png",
+  "3 of clubs": "3_of_clubs.png",
+  "3 of diamonds": "3_of_diamonds.png",
+  "3 of hearts": "3_of_hearts.png",
+  "3 of spades": "3_of_spades.png",
+  "4 of clubs": "4_of_clubs.png",
+  "4 of diamonds": "4_of_diamonds.png",
+  "4 of hearts": "4_of_hearts.png",
+  "4 of spades": "4_of_spades.png",
+  "5 of clubs": "5_of_clubs.png",
+  "5 of diamonds": "5_of_diamonds.png",
+  "5 of hearts": "5_of_hearts.png",
+  "5 of spades": "5_of_spades.png",
+  "6 of clubs": "6_of_clubs.png",
+  "6 of diamonds": "6_of_diamonds.png",
+  "6 of hearts": "6_of_hearts.png",
+  "6 of spades": "6_of_spades.png",
+  "7 of clubs": "7_of_clubs.png",
+  "7 of diamonds": "7_of_diamonds.png",
+  "7 of hearts": "7_of_hearts.png",
+  "7 of spades": "7_of_spades.png",
+  "8 of clubs": "8_of_clubs.png",
+  "8 of diamonds": "8_of_diamonds.png",
+  "8 of hearts": "8_of_hearts.png",
+  "8 of spades": "8_of_spades.png",
+  "9 of clubs": "9_of_clubs.png",
+  "9 of diamonds": "9_of_diamonds.png",
+  "9 of hearts": "9_of_hearts.png",
+  "9 of spades": "9_of_spades.png",
+  "ace of clubs": "ace_of_clubs.png",
+  "ace of diamonds": "ace_of_diamonds.png",
+  "ace of hearts": "ace_of_hearts.png",
+  "ace of spades": "ace_of_spades.png",
+  "ace of spades2": "ace_of_spades2.png",
+  "black joker": "black_joker.png",
+  "jack of clubs": "jack_of_clubs.png",
+  "jack of clubs2": "jack_of_clubs2.png",
+  "jack of diamonds": "jack_of_diamonds.png",
+  "jack of diamonds2": "jack_of_diamonds2.png",
+  "jack of hearts": "jack_of_hearts.png",
+  "jack of hearts2": "jack_of_hearts2.png",
+  "jack of spades": "jack_of_spades.png",
+  "jack of spades2": "jack_of_spades2.png",
+  "king of clubs": "king_of_clubs.png",
+  "king of clubs2": "king_of_clubs2.png",
+  "king of diamonds": "king_of_diamonds.png",
+  "king of diamonds2": "king_of_diamonds2.png",
+  "king of hearts": "king_of_hearts.png",
+  "king of hearts2": "king_of_hearts2.png",
+  "king of spades": "king_of_spades.png",
+  "king of spades2": "king_of_spades2.png",
+  "queen of clubs": "queen_of_clubs.png",
+  "queen of clubs2": "queen_of_clubs2.png",
+  "queen of diamonds": "queen_of_diamonds.png",
+  "queen of diamonds2": "queen_of_diamonds2.png",
+  "queen of hearts": "queen_of_hearts.png",
+  "queen of hearts2": "queen_of_hearts2.png",
+  "queen of spades": "queen_of_spades.png",
+  "queen of spades2": "queen_of_spades2.png",
+  "red joker": "red_joker.png",
+};
+
+  function matchCard(text) {
+    const lower = text.toLowerCase();
+    for (const [phrase, filename] of Object.entries(cardMap)) {
+      if (lower.includes(phrase)) return filename;
+    }
+    return null;
+  }
+
+  let recognition;
+  let listening = false;
+  let tapCount = 0;
+  let lastTapTime = 0;
+
+  function startListening() {
+    if (listening) return;
+
+    const userLang = localStorage.getItem("echomind_lang") || navigator.language;
+    recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = userLang;
+    recognition.continuous = false;
+    recognition.interimResults = false;
+
+    recognition.onstart = () => {
+      listening = true;
+      document.getElementById("reveal").innerHTML = "🎙️ Listening...";
+    };
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      const cardFile = matchCard(transcript);
+      if (cardFile) {
+        showCard(cardFile);
+      } else {
+        document.getElementById("reveal").innerHTML = "❓ No match for: " + transcript;
+      }
+    };
+
+    recognition.onerror = (event) => {
+      document.getElementById("reveal").innerHTML = "❌ Mic error: " + event.error;
+    };
+
+    recognition.onend = () => {
+      listening = false;
+      if (document.getElementById("keepListening")?.checked) {
+        startListening();
+      } else {
+        document.getElementById("reveal").innerHTML += "<br>(Mic stopped)";
+      }
+    };
+
+    recognition.start();
+  }
+
+  function showCard(filename) {
+    document.getElementById("interface").style.display = document.getElementById("hideUI")?.checked ? "none" : "block";
+    document.getElementById("reveal").innerHTML = '<img src="/assets/cards/PNG-cards-1.3/' + filename + '" alt="' + filename + '" style="width:65vw;max-width:350px;">';
+    new Audio("https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-reward-952.mp3").play();
+  }
+
+  document.addEventListener("click", handleTripleTap);
+  document.addEventListener("touchend", handleTripleTap);
+
+  function handleTripleTap() {
+    const now = new Date().getTime();
+    if (now - lastTapTime < 1000) {
+      tapCount++;
+      if (tapCount === 3) {
+        window.location.href = '../mentalism.html';
+      }
+    } else {
+      tapCount = 1;
+    }
+    lastTapTime = now;
+  }
+</script>
+
+</body></html>

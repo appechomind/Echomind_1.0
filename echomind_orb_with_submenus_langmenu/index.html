@@ -1,0 +1,134 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>EchoMind Orb Menu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: radial-gradient(circle at center, #0c0c22 0%, #000000 100%);
+      font-family: 'Segoe UI', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      color: white;
+    }
+
+    h1 {
+      font-size: 3em;
+      font-weight: bold;
+      text-align: center;
+      color: #ffe066;
+      text-shadow: 0 0 20px #ffe066, 0 0 40px #ffc300;
+      margin-top: 40px;
+    }
+
+    .orb-grid {
+      position: relative;
+      width: 600px;
+      height: 600px;
+      margin: 40px auto;
+    }
+
+    .orb {
+      position: absolute;
+      width: 140px;
+      height: 140px;
+      background: #14143d;
+      color: white;
+      border: 2px solid gold;
+      border-radius: 50%;
+      box-shadow: 0 0 20px #ffd700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-size: 1.1em;
+      font-weight: bold;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      padding: 15px;
+    }
+
+    .orb:hover {
+      background: #292973;
+      transform: scale(1.1);
+      box-shadow: 0 0 30px #fff67f;
+    }
+
+    .pos1 { top: 0%; left: 40%; }
+    .pos2 { top: 18%; left: 75%; }
+    .pos3 { top: 45%; left: 90%; }
+    .pos4 { top: 75%; left: 75%; }
+    .pos5 { top: 90%; left: 40%; }
+    .pos6 { top: 75%; left: 5%; }
+    .pos7 { top: 45%; left: -10%; }
+    .pos8 { top: 18%; left: 5%; }
+
+    @media screen and (max-width: 768px) {
+      .orb-grid {
+        width: 100vw;
+        height: 100vw;
+      }
+      .orb {
+        width: 100px;
+        height: 100px;
+        font-size: 0.9em;
+        padding: 10px;
+      }
+    }
+  </style>
+
+<style>
+canvas#fractalBg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+}
+</style>
+<script>
+window.onload = function () {
+  const canvas = document.createElement("canvas");
+  canvas.id = "fractalBg";
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext("2d");
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  let t = 0;
+  function drawFractal() {
+    let w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    for (let i = 0; i < 200; i++) {
+      let x = w / 2 + Math.sin(i * 0.1 + t) * i * 0.8;
+      let y = h / 2 + 90 + Math.cos(i * 0.1 + t) * i * 0.8;
+      ctx.fillStyle = `hsl(${(t * 50 + i * 2) % 360}, 100%, ${30 + i % 50}%)`;
+      ctx.beginPath();
+      ctx.arc(x, y, 2 + (i % 3), 0, Math.PI * 2);
+      ctx.fill();
+    }
+    t += 0.01;
+    requestAnimationFrame(drawFractal);
+  }
+  drawFractal();
+};
+</script>
+
+</head>
+<body>
+  <h1>EchoMind</h1>
+  <div class="orb-grid">
+    <a href="tricks/mentalism.html" class="orb pos1">Mentalism</a>
+    <a href="tricks/dua_device.html" class="orb pos2">Duá-Device</a>
+    <a href="tricks/phone_effects.html" class="orb pos3">Phone Effects</a>
+    <a href="tricks/puzzles.html" class="orb pos4">Puzzles</a>
+    <a href="tricks/community.html" class="orb pos5">Community</a>
+    <a href="tricks/gizmo.html" class="orb pos6">Gizmo</a>
+    <a href="tricks/settings.html" class="orb pos7">Settings</a>
+    <a href="tricks/dont_click.html" class="orb pos8">Don’t Click</a>
+  </div>
+</body>
+</html>
