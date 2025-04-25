@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <Settings>EchoMind - Settings</Settings>
+  <title>EchoMind - TITLE</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     :root {
@@ -10,6 +10,9 @@
       --gold-glow: #ffe066;
       --bg-dark: #0b0b0b;
       --text-color: #ffffff;
+      --accent-color: #ff6b6b;
+      --success-color: #51cf66;
+      --warning-color: #ffd43b;
     }
 
     body {
@@ -55,7 +58,7 @@
       text-shadow: 0 0 10px var(--gold);
       margin: 40px 0;
       font-size: 2.5em;
-      animation: SettingsPulse 3s infinite alternate;
+      animation: titlePulse 3s infinite alternate;
     }
 
     .content {
@@ -66,6 +69,11 @@
       border-radius: 10px;
       backdrop-filter: blur(5px);
       border: 1px solid rgba(255, 215, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .content:hover {
+      transform: translateY(-5px);
     }
 
     .button {
@@ -120,11 +128,24 @@
       opacity: 0;
       transform: translateX(100%);
       transition: all 0.3s ease;
+      z-index: 100;
     }
 
     .status-message.show {
       opacity: 1;
       transform: translateX(0);
+    }
+
+    .status-message.success {
+      border-left: 4px solid var(--success-color);
+    }
+
+    .status-message.error {
+      border-left: 4px solid var(--accent-color);
+    }
+
+    .status-message.warning {
+      border-left: 4px solid var(--warning-color);
     }
     
     canvas#fractalBg {
@@ -137,7 +158,41 @@
       opacity: 0.5;
     }
 
-    @keyframes SettingsPulse {
+    .help-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .help-content {
+      background: var(--bg-dark);
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid var(--gold);
+      max-width: 80%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .close-help {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: var(--text-color);
+      font-size: 1.5em;
+      cursor: pointer;
+    }
+
+    @keyframes titlePulse {
       0% { text-shadow: 0 0 10px var(--gold); }
       100% { text-shadow: 0 0 20px var(--gold), 0 0 40px var(--gold-glow); }
     }
@@ -156,77 +211,116 @@
         width: 100%;
         margin: 5px 0;
       }
+
+      .help-content {
+        max-width: 95%;
+        margin: 10px;
+      }
+    }
+
+    .loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: var(--bg-dark);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+
+    .loading-spinner {
+      width: 50px;
+      height: 50px;
+      border: 3px solid var(--gold);
+      border-radius: 50%;
+      border-top-color: transparent;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
+  <div class="loading">
+    <div class="loading-spinner"></div>
+  </div>
+
   <a href="../index.html" class="back-button">←</a>
-  <h1>Settings</h1>
+  <h1>TITLE</h1>
   <div class="content">
     <div id="trick-content">
-      <div id="trick-content">
-  <div class="settings-grid">
-    <div class="setting-item">
-      <label>Theme</label>
-      <select onchange="updateSetting('theme', this.value)">
-        <option value="dark">Dark</option>
-        <option value="light">Light</option>
-      </select>
-    </div>
-    <div class="setting-item">
-      <label>Sound Effects</label>
-      <input type="checkbox" onchange="updateSetting('sound', this.checked)" checked>
-    </div>
-  </div>
-</div>
-<script>
-  function updateSetting(setting, value) {
-    showMessage(`Updated ${setting} to ${value}`);
-    // Add settings update code here
-  }
-</script>
-<style>
-  .settings-grid {
-    display: grid;
-    gap: 20px;
-    text-align: left;
-  }
-  .setting-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid rgba(255, 215, 0, 0.1);
-  }
-</style>
+      <!-- Content will be dynamically loaded here -->
     </div>
     <div class="controls">
       <button class="button" onclick="showHelp()">Help</button>
       <button class="button" onclick="resetTrick()">Reset</button>
     </div>
   </div>
+
+  <div class="help-overlay">
+    <div class="help-content">
+      <button class="close-help" onclick="hideHelp()">×</button>
+      <h2>How to Use</h2>
+      <div id="help-text">
+        <!-- Help content will be dynamically loaded here -->
+      </div>
+    </div>
+  </div>
+
   <div id="status-message" class="status-message"></div>
 
   <script src="scripts/fractal.js"></script>
   <script src="scripts/audio.js"></script>
+  <script src="scripts/utils.js"></script>
   <script>
-    // Common utility functions
-    function showMessage(message, duration = 3000) {
+    // Show loading screen
+    const loading = document.querySelector('.loading');
+    
+    // Hide loading screen when everything is ready
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        EchoMind.animate.fadeOut(loading);
+      }, 500);
+    });
+
+    // Enhanced message system
+    function showMessage(message, type = 'info', duration = 3000) {
       const statusElement = document.getElementById('status-message');
       statusElement.textContent = message;
-      statusElement.classList.add('show');
+      statusElement.className = 'status-message show ' + type;
+      
+      if (type === 'error') {
+        EchoMind.sounds.error();
+      } else if (type === 'success') {
+        EchoMind.sounds.success();
+      }
       
       setTimeout(() => {
         statusElement.classList.remove('show');
       }, duration);
     }
 
+    // Enhanced help system
     function showHelp() {
-      showMessage('Help information for this trick will be displayed here.');
+      const helpOverlay = document.querySelector('.help-overlay');
+      EchoMind.animate.fadeIn(helpOverlay);
+      EchoMind.sounds.click();
+    }
+
+    function hideHelp() {
+      const helpOverlay = document.querySelector('.help-overlay');
+      EchoMind.animate.fadeOut(helpOverlay);
+      EchoMind.sounds.click();
     }
 
     function resetTrick() {
-      showMessage('Trick has been reset.');
+      showMessage('Trick has been reset.', 'warning');
+      EchoMind.storage.clear('trick_state');
       // Add specific reset logic here
     }
 
@@ -257,6 +351,20 @@
       }
       lastTouchEnd = now;
     }, false);
+
+    // Save state before unload
+    window.addEventListener('beforeunload', () => {
+      if (window.saveTrickState) {
+        window.saveTrickState();
+      }
+    });
+
+    // Restore state on load
+    window.addEventListener('load', () => {
+      if (window.loadTrickState) {
+        window.loadTrickState();
+      }
+    });
   </script>
 </body>
 </html> 

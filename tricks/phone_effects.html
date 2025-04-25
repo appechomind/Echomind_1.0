@@ -1,19 +1,242 @@
-<html><head>
-<style>
-  body {
-    margin: 0; padding: 0;
-    background: #0b0b0b;
-    overflow-x: hidden;
-    font-family: system-ui, sans-serif;
-    color: white;
-    text-align: center;
-  }
-  canvas#fractalBg {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: -1;
-  }
-</style>
-</head><body><canvas id="fractalBg"></canvas><h1>Phone Effects</h1><script src="scripts/fractal.js"></script><script src="scripts/audio.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>📱 Phone FX - EchoMind</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --gold-glow: #ffe066;
+      --bg-dark: #0b0b0b;
+      --card-bg: rgba(255, 255, 255, 0.1);
+    }
+
+    body {
+      background: var(--bg-dark);
+      color: white;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      max-width: 800px;
+      width: 100%;
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    h1 {
+      color: gold;
+      text-shadow: 0 0 10px gold;
+      margin-bottom: 40px;
+      font-size: 2.5em;
+    }
+
+    .tricks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .trick-card {
+      background: var(--card-bg);
+      border: 2px solid gold;
+      border-radius: 15px;
+      padding: 20px;
+      text-align: left;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .trick-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 20px var(--gold-glow);
+    }
+
+    .trick-card h2 {
+      color: gold;
+      margin-top: 0;
+      font-size: 1.5em;
+    }
+
+    .trick-card p {
+      color: #ddd;
+      line-height: 1.6;
+    }
+
+    .trick-content {
+      display: none;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid rgba(255, 215, 0, 0.3);
+    }
+
+    .trick-card.active .trick-content {
+      display: block;
+    }
+
+    .trick-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at center, transparent 30%, rgba(255, 215, 0, 0.1) 70%);
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.3s ease-out;
+    }
+
+    .trick-card:hover::before {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .back-btn {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      color: gold;
+      text-decoration: none;
+      font-size: 1.2em;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .back-btn:hover {
+      text-shadow: 0 0 10px gold;
+    }
+
+    .trick-steps {
+      list-style: none;
+      padding: 0;
+      margin: 15px 0;
+    }
+
+    .trick-steps li {
+      margin: 10px 0;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .trick-steps li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: gold;
+    }
+
+    .button {
+      background: linear-gradient(45deg, #ffd700, #ffa500);
+      border: none;
+      border-radius: 25px;
+      color: black;
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px var(--gold-glow);
+    }
+
+    @media (max-width: 600px) {
+      .tricks-grid {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="../index.html" class="back-btn">← Back</a>
+  
+  <div class="container">
+    <h1>📱 Phone FX</h1>
+    
+    <div class="tricks-grid">
+      <div class="trick-card" onclick="this.classList.toggle('active')">
+        <h2>🎭 Mirror Mind</h2>
+        <p>Make your phone mysteriously mirror the spectator's thoughts.</p>
+        <div class="trick-content">
+          <ol class="trick-steps">
+            <li>Ask the spectator to think of any emoji</li>
+            <li>Have them visualize it clearly in their mind</li>
+            <li>Tell them to open their phone's emoji keyboard</li>
+            <li>Ask them to scroll until they find their emoji, but not tap it</li>
+            <li>Place your phone face down</li>
+            <li>When they're ready, have them tap their emoji</li>
+            <li>Turn over your phone to reveal the same emoji on your screen</li>
+          </ol>
+          <button class="button" onclick="window.location.href='phone_effects/mirror_mind.html'">Try It</button>
+        </div>
+      </div>
+
+      <div class="trick-card" onclick="this.classList.toggle('active')">
+        <h2>🔮 Time Traveler</h2>
+        <p>Predict the exact time someone will check their phone.</p>
+        <div class="trick-content">
+          <ol class="trick-steps">
+            <li>Write down a prediction and seal it</li>
+            <li>Ask someone to set a random timer on their phone</li>
+            <li>When it goes off, have them check the exact time</li>
+            <li>Open your prediction to reveal you knew the exact time</li>
+          </ol>
+          <button class="button" onclick="window.location.href='phone_effects/time_traveler.html'">Try It</button>
+        </div>
+      </div>
+
+      <div class="trick-card" onclick="this.classList.toggle('active')">
+        <h2>📸 Phantom Photo</h2>
+        <p>Make a chosen card appear in their camera roll.</p>
+        <div class="trick-content">
+          <ol class="trick-steps">
+            <li>Have them select any card from the deck</li>
+            <li>Ask them to take a photo of the deck box</li>
+            <li>When they check their photo, their card appears</li>
+          </ol>
+          <button class="button" onclick="window.location.href='phone_effects/phantom_photo.html'">Try It</button>
+        </div>
+      </div>
+
+      <div class="trick-card" onclick="this.classList.toggle('active')">
+        <h2>📞 Mystic Call</h2>
+        <p>Their phone reveals their deepest thoughts.</p>
+        <div class="trick-content">
+          <ol class="trick-steps">
+            <li>Ask them to think of something meaningful</li>
+            <li>Have them dial a random phone number</li>
+            <li>The stranger who answers reveals their thought</li>
+          </ol>
+          <button class="button" onclick="window.location.href='phone_effects/mystic_call.html'">Try It</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Prevent click propagation on buttons
+    document.querySelectorAll('.button').forEach(button => {
+      button.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    });
+  </script>
+</body>
+</html> 

@@ -1,19 +1,246 @@
-<html><head>
-<style>
-  body {
-    margin: 0; padding: 0;
-    background: #0b0b0b;
-    overflow-x: hidden;
-    font-family: system-ui, sans-serif;
-    color: white;
-    text-align: center;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <Don't Click>EchoMind - Don't Click</Don't Click>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --gold: #ffd700;
+      --gold-glow: #ffe066;
+      --bg-dark: #0b0b0b;
+      --text-color: #ffffff;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      background: var(--bg-dark);
+      overflow-x: hidden;
+      font-family: "Segoe UI", system-ui, sans-serif;
+      color: var(--text-color);
+      text-align: center;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .back-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      color: var(--text-color);
+      text-decoration: none;
+      font-size: 1.5em;
+      z-index: 10;
+      background: rgba(0, 0, 0, 0.5);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--gold);
+      transition: all 0.3s ease;
+    }
+    
+    .back-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 15px var(--gold-glow);
+    }
+    
+    h1 {
+      color: var(--gold);
+      text-shadow: 0 0 10px var(--gold);
+      margin: 40px 0;
+      font-size: 2.5em;
+      animation: Don't ClickPulse 3s infinite alternate;
+    }
+
+    .content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 215, 0, 0.1);
+    }
+
+    .button {
+      background: transparent;
+      border: 2px solid var(--gold);
+      color: var(--text-color);
+      padding: 10px 20px;
+      font-size: 1em;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .button:hover {
+      background: rgba(255, 215, 0, 0.1);
+      box-shadow: 0 0 15px var(--gold-glow);
+      transform: translateY(-2px);
+    }
+
+    .button:active {
+      transform: translateY(0);
+    }
+
+    .button::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at center, rgba(255, 215, 0, 0.2) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .button:hover::after {
+      opacity: 1;
+    }
+
+    .status-message {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      border-radius: 5px;
+      background: rgba(0, 0, 0, 0.8);
+      color: var(--text-color);
+      font-size: 0.9em;
+      opacity: 0;
+      transform: translateX(100%);
+      transition: all 0.3s ease;
+    }
+
+    .status-message.show {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    
+    canvas#fractalBg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      opacity: 0.5;
+    }
+
+    @keyframes Don't ClickPulse {
+      0% { text-shadow: 0 0 10px var(--gold); }
+      100% { text-shadow: 0 0 20px var(--gold), 0 0 40px var(--gold-glow); }
+    }
+
+    @media (max-width: 600px) {
+      .content {
+        padding: 10px;
+        margin: 10px;
+      }
+
+      h1 {
+        font-size: 2em;
+      }
+
+      .button {
+        width: 100%;
+        margin: 5px 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="../index.html" class="back-button">←</a>
+  <h1>Don't Click</h1>
+  <div class="content">
+    <div id="trick-content">
+      <div id="trick-content">
+  <p>Whatever you do, don't click the button below...</p>
+  <button class="button danger" onclick="dontClick()">DO NOT CLICK</button>
+</div>
+<script>
+  function dontClick() {
+    showMessage("I told you not to click!");
+    // Add mysterious effects here
   }
-  canvas#fractalBg {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: -1;
+</script>
+<style>
+  .danger {
+    background: rgba(255, 0, 0, 0.1);
+    border-color: #ff0000;
+  }
+  .danger:hover {
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
   }
 </style>
-</head><body><canvas id="fractalBg"></canvas><h1>Don’t Click</h1><script src="scripts/fractal.js"></script><script src="scripts/audio.js"></script></body></html>
+    </div>
+    <div class="controls">
+      <button class="button" onclick="showHelp()">Help</button>
+      <button class="button" onclick="resetTrick()">Reset</button>
+    </div>
+  </div>
+  <div id="status-message" class="status-message"></div>
+
+  <script src="scripts/fractal.js"></script>
+  <script src="scripts/audio.js"></script>
+  <script>
+    // Common utility functions
+    function showMessage(message, duration = 3000) {
+      const statusElement = document.getElementById('status-message');
+      statusElement.textContent = message;
+      statusElement.classList.add('show');
+      
+      setTimeout(() => {
+        statusElement.classList.remove('show');
+      }, duration);
+    }
+
+    function showHelp() {
+      showMessage('Help information for this trick will be displayed here.');
+    }
+
+    function resetTrick() {
+      showMessage('Trick has been reset.');
+      // Add specific reset logic here
+    }
+
+    // Touch feedback for buttons
+    document.querySelectorAll('.button').forEach(button => {
+      button.addEventListener('touchstart', function() {
+        this.style.transform = 'scale(0.95)';
+      });
+      
+      button.addEventListener('touchend', function() {
+        this.style.transform = '';
+      });
+    });
+
+    // Initialize audio context on user interaction
+    document.addEventListener('click', async () => {
+      if (window.audioManager) {
+        await window.audioManager.init();
+      }
+    }, { once: true });
+
+    // Prevent zoom on double tap on mobile
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function(event) {
+      const now = (new Date()).getTime();
+      if (now - lastTouchEnd <= 300) {
+        event.preventDefault();
+      }
+      lastTouchEnd = now;
+    }, false);
+  </script>
+</body>
+</html> 

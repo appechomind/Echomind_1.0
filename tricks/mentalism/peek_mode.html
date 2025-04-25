@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>EchoMind - Google Peek</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../styles/template.css">
+  <style>
+    .search-container {
+      width: 100%;
+      max-width: 600px;
+      margin: 20px auto;
+      position: relative;
+    }
+
+    .google-search {
+      width: 100%;
+      padding: 12px 45px 12px 15px;
+      border: 1px solid #dfe1e5;
+      border-radius: 24px;
+      font-size: 16px;
+      outline: none;
+      transition: all 0.3s ease;
+      background: white;
+      color: #000;
+    }
+
+    .google-search:focus {
+      box-shadow: 0 1px 6px rgba(32,33,36,.28);
+      border-color: rgba(223,225,229,0);
+    }
+
+    .search-icon {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #4285f4;
+      cursor: pointer;
+    }
+
+    .mode-switch {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.7);
+      border: 1px solid var(--accent-color);
+      color: white;
+      padding: 8px 15px;
+      border-radius: 20px;
+      cursor: pointer;
+      z-index: 100;
+      transition: all 0.3s ease;
+    }
+
+    .mode-switch:hover {
+      background: rgba(0, 0, 0, 0.9);
+      transform: scale(1.05);
+    }
+
+    .peek-display {
+      background: rgba(0, 0, 0, 0.8);
+      color: #4285f4;
+      font-family: monospace;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .peek-display.active {
+      display: block;
+    }
+
+    #trick-content {
+      text-align: center;
+    }
+
+    .instructions {
+      max-width: 600px;
+      margin: 20px auto;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      font-size: 0.9em;
+    }
+
+    .key-combo {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="loading">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <a href="../mentalism.html" class="back-button">←</a>
+  <h1>Google Peek</h1>
+  
+  <div class="content">
+    <div id="trick-content">
+      <div class="search-container">
+        <input type="text" class="google-search" placeholder="Search Google or type a URL" autocomplete="off">
+        <span class="search-icon">🔍</span>
+      </div>
+      <div class="peek-display"></div>
+      <div class="instructions">
+        <p>Press <span class="key-combo">Alt + P</span> to toggle between Performance and Peek modes</p>
+      </div>
+    </div>
+    <div class="controls">
+      <button class="button" onclick="showHelp()">Help</button>
+    </div>
+  </div>
+
+  <button class="mode-switch">🎭 Performance Mode</button>
+
+  <div class="help-overlay">
+    <div class="help-content">
+      <button class="close-help" onclick="hideHelp()">×</button>
+      <h2>Google Peek</h2>
+      <div id="help-text">
+        <p>A powerful mentalism tool that allows you to secretly view what someone has searched for on Google.</p>
+        <h3>How to Use:</h3>
+        <ol>
+          <li>Have your spectator open Google on their device</li>
+          <li>Ask them to think of something to search for</li>
+          <li>While they type their search, secretly press Alt+P to enter Peek mode</li>
+          <li>The search text will appear in your peek display</li>
+          <li>Press Alt+P again to return to Performance mode</li>
+        </ol>
+        <p><strong>Note:</strong> This effect works best when you can naturally glimpse their screen while they type.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="status-message" class="status-message"></div>
+
+  <script src="../scripts/fractal.js"></script>
+  <script src="../scripts/audio.js"></script>
+  <script src="../scripts/utils.js"></script>
+  <script>
+    let peekMode = false;
+    const searchInput = document.querySelector('.google-search');
+    const peekDisplay = document.querySelector('.peek-display');
+    const modeSwitch = document.querySelector('.mode-switch');
+
+    // Initialize
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        EchoMind.animate.fadeOut(document.querySelector('.loading'));
+      }, 500);
+    });
+
+    // Handle mode switching
+    document.addEventListener('keydown', (e) => {
+      if (e.altKey && e.key.toLowerCase() === 'p') {
+        togglePeekMode();
+      }
+    });
+
+    modeSwitch.addEventListener('click', togglePeekMode);
+
+    // Track input changes
+    searchInput.addEventListener('input', (e) => {
+      if (peekMode) {
+        peekDisplay.textContent = e.target.value;
+      }
+    });
+
+    function togglePeekMode() {
+      peekMode = !peekMode;
+      modeSwitch.textContent = peekMode ? '👁️ Peek Mode' : '🎭 Performance Mode';
+      peekDisplay.classList.toggle('active', peekMode);
+      
+      // Play subtle sound effect
+      if (typeof EchoMind !== 'undefined' && EchoMind.audio) {
+        EchoMind.audio.playEffect(peekMode ? 'activate' : 'deactivate');
+      }
+      
+      // Show status message
+      const status = document.getElementById('status-message');
+      status.textContent = peekMode ? 'Peek Mode Activated' : 'Performance Mode Activated';
+      status.className = 'status-message ' + (peekMode ? 'warning' : 'success');
+      setTimeout(() => status.className = 'status-message', 2000);
+    }
+  </script>
+</body>
+</html> 

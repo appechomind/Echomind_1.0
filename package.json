@@ -1,0 +1,14 @@
+{
+  "name": "echomind",
+  "version": "1.0.0",
+  "description": "EchoMind - Mind Reading Application",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jsdom": "^24.0.0"
+  }
+} 
